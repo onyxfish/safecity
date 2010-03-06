@@ -1,7 +1,8 @@
 h2. Basic Request Patterns
 
-* "on": enable violence reports for the senders number
-* "off": disable violence reports for the senders number
+* "on $location": enable reports for the senders number or update senders location if already registered
+* "update $location": update location for sender
+* "off": disable reports for the senders number
 
 h2. Process / Workflow
 
@@ -18,7 +19,7 @@ h2. Process / Workflow
 h2. Custom Apps
 
 * locate: annotates location information onto message
-* services: refers the user to services near them (TODO - if no parsed info, try signup info)
+* TODO: services: refers the user to services near them (if no parsed location, try signup info)
 * signup: register, deregister, and update citizen info
 * danger: stores and rebroadcasts reports of suspicious activity
 
