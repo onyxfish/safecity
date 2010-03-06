@@ -1,2 +1,2 @@
 git+http://github.com/rapidsms/pygsm.git@720f662
-git+http://github.com/rapidsms/rapidsms.git@c706c11
+git+http://github.com/bouvard/rapidsms.git

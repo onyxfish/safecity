@@ -1,6 +1,6 @@
 import csv
-import logging
-log = logging.getLogger('safecity.locate.load_tiger')
+from rapidsms import log as rlog
+log = rlog.Logger(level='Debug')
 from optparse import make_option
 import os
 
@@ -23,7 +23,7 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         if options['clear']:
-            logging.info("Clearing all TIGER data.")
+            log.write('', 'info', 'Clearing all TIGER data.')
             TigerBlock.objects.all().delete()
             TigerNode.objects.all().delete()
             TigerRoad.objects.all().delete()
@@ -44,7 +44,7 @@ class Command(NoArgsCommand):
             linestring = feature.geom
             
             # TODO: bad data?
-            if not road_name or not road_dir or not road_type:
+            if not road_name:
                 continue
             
             road, created = TigerRoad.objects.get_or_create(
@@ -55,10 +55,11 @@ class Command(NoArgsCommand):
             
             nodes = []
             for pt in linestring.coords:
+                point = Point(pt)
                 try:
-                    n = TigerNode.objects.filter(pt=Point(pt))[0]
+                    n = TigerNode.objects.filter(location__equals=point)[0]
                 except IndexError:
-                    n = TigerNode.objects.create(pt=Point(pt))
+                    n = TigerNode.objects.create(location=point)
                 nodes.append(n)
                 
             block, created = TigerBlock.objects.get_or_create(

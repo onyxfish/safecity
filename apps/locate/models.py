@@ -7,11 +7,32 @@ LOCALES = (
     ('LM', 'Landmark'),
 )
 
+TIGER_ROAD_TYPES = (
+    ('Ave', 'Avenue'),
+    ('Blvd', 'Boulevard'),
+    ('Cir', 'Circle'),
+    ('Ct', 'Court'),
+    ('Dr', 'Drive'),
+    ('Ln', 'Lane'),
+    ('Pky', 'Parkway'),
+    ('Pl', 'Place'),
+    ('Rd', 'Road'),
+    ('St', 'Street'),
+    ('Ter', 'Terrace'),
+    ('Trl', 'Trl'),         # ???
+    ('Way', 'Way'),
+    ('Xing', 'Crossing')
+)
+
 TIGER_ROAD_DIRS = (
     ('N', 'North'),
+    ('NE', 'Northeast'),
     ('E', 'East'),
+    ('SE', 'Southeast'),
     ('S', 'South'),
+    ('SW', 'Southwest'),
     ('W', 'West'),
+    ('NW', 'Northwest'),
 )
 
 class Location(models.Model):
@@ -34,6 +55,8 @@ class Location(models.Model):
         choices=LOCALES,
         help_text='The type of location that this point describes.')
         
+    objects = models.GeoManager()
+        
 # Supplemental models for loading TIGER data
 
 class TigerRoad(models.Model):
@@ -45,11 +68,11 @@ class TigerRoad(models.Model):
         help_text='The road name.')
     
     suffix = models.CharField(
-        max_length=16,
+        max_length=4,
         help_text='The road type, e.g. Ave.')
         
     direction = models.CharField(
-        max_length=1,
+        max_length=2,
         choices=TIGER_ROAD_DIRS,
         help_text='Direction this road runs.')
     
@@ -60,7 +83,9 @@ class TigerNode(models.Model):
     """
     Imported node/point information from census TIGER data.
     """
-    pt = models.PointField()
+    location = models.PointField()
+
+    objects = models.GeoManager()
 
 class TigerBlock(models.Model):
     """

@@ -25,7 +25,8 @@ h2. Custom Apps
 
 h2. Misc TODO
 
-* logger should not record phone numbers
+* logger app should not record phone numbers
+* need to gut and rewire the rapidsms logging system
 
 h2. Bugs in RapidSMS
 
