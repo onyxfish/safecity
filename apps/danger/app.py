@@ -14,3 +14,5 @@ class App (rapidsms.app.App):
         TODO
         """
         message.respond('got it')
+        
+        self.handled = True

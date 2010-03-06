@@ -11,11 +11,11 @@ class App (rapidsms.app.App):
         """
         message.location = self.extract_location(message.text)
         
-    def extract_location(self, text):
-        """
-        Extract a location from a text string.
-        
-        TODO
-        """
-        return None
+def extract_location(text):
+    """
+    Extract a location from a text string.
+    
+    TODO
+    """
+    return None
         
