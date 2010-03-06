@@ -7,6 +7,13 @@ LOCALES = (
     ('LM', 'Landmark'),
 )
 
+TIGER_ROAD_DIRS = (
+    ('N', 'North'),
+    ('E', 'East'),
+    ('S', 'South'),
+    ('W', 'West'),
+)
+
 class Location(models.Model):
     """
     Predefined locations in the city that can be used for quick geo-lookups.
@@ -26,3 +33,45 @@ class Location(models.Model):
         max_length=2,
         choices=LOCALES,
         help_text='The type of location that this point describes.')
+        
+# Supplemental models for loading TIGER data
+
+class TigerRoad(models.Model):
+    """
+    Imported road information from census TIGER data.
+    """
+    name = models.CharField(
+        max_length=100,
+        help_text='The road name.')
+    
+    suffix = models.CharField(
+        max_length=16,
+        help_text='The road type, e.g. Ave.')
+        
+    direction = models.CharField(
+        max_length=1,
+        choices=TIGER_ROAD_DIRS,
+        help_text='Direction this road runs.')
+    
+    class Meta:
+        unique_together = (('name', 'suffix', 'direction'),)
+
+class TigerNode(models.Model):
+    """
+    Imported node/point information from census TIGER data.
+    """
+    pt = models.PointField()
+
+class TigerBlock(models.Model):
+    """
+    Imported block informtaion from census TIGER data.
+    """
+    road = models.ForeignKey('TigerRoad')
+    
+    nodes = models.ManyToManyField('TigerNode',
+        help_text='Two or more points that define this block.')
+    
+    from_addr_left = models.IntegerField()
+    to_addr_left = models.IntegerField()
+    from_addr_right = models.IntegerField()
+    to_addr_right = models.IntegerField()
