@@ -1,0 +1,26 @@
+h2. Basic Request Patterns
+
+* "on": enable violence reports for the senders number
+* "off": disable violence reports for the senders number
+
+h2. Process / Workflow
+
+* Text message is received
+* If it matches a basic request pattern, the appropriate handler responds
+* Otherwise its handled by the violence report logic
+* The message is stored in the database
+* The text is scraped for location info (street names, etc)
+* Once the location is identified its lat/lon is looked up in the database
+* The message is rebroadcast to anyone who has requested messages and is near the reported location
+* After two hours the message is scrubbed of its identifying information
+* The message is posted online
+
+h2. Apps
+
+* locate: annotates location information onto message
+* danger: stores and rebroadcasts reports of suspicious activity
+
+
+h2. Bugs in RapidSMS
+
+* Dashboard pages don't check that user is logged in
