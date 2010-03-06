@@ -20,6 +20,9 @@ h2. Apps
 * locate: annotates location information onto message
 * danger: stores and rebroadcasts reports of suspicious activity
 
+h2. Misc TODO
+
+* logger should not record phone numbers
 
 h2. Bugs in RapidSMS
 
