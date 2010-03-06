@@ -14,7 +14,7 @@ class Location(models.Model):
     Note that a single physical location may have many entries in this table.
     """
     name = models.CharField(
-        pk=True,
+        primary_key=True,
         max_length=100,
         help_text='A description of the location. E.g. "Austin & Augusta," "Millenium Park," or "1600 N Augusta."')
         
