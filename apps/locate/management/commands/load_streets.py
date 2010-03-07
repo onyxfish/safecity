@@ -39,9 +39,14 @@ class Command(NoArgsCommand):
                 
                 block_loc, created = Location.objects.get_or_create(
                     name=block_name,
-                    # location=,
                     locale='BL',
                     )
+                
+                # TODO - this effectively makes the exact location of a block random along
+                # its length... it really should compute the center fron endpoints, but thats...
+                # hard.
+                block_loc.location = node.location
+                block_loc.save()
                 
                 block_loc.place_names.add(place)
         
