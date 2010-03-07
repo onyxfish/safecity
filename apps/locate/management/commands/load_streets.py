@@ -66,9 +66,10 @@ class Command(NoArgsCommand):
                     
                     intersection, created = Location.objects.get_or_create(
                         name=intersection_name,
-                        # location=,
                         locale='IN',
                         )
+                    intersection.location = node.location
+                    intersection.save()
                         
                     intersection.place_names.add(oneway_place)    
                     intersection.place_names.add(otherway_place)
