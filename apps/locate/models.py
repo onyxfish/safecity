@@ -52,7 +52,13 @@ class Road(models.Model):
         help_text='Direction this road runs.')
         
     def save(self, *args, **kwargs):
-        self.display_name = '%s %s %s' % (self.direction, self.name, self.suffix)
+        if self.direction:
+            dir_and_name = '%s %s' % (self.direction, self.name)
+        else:
+            dir_and_name = self.name
+            
+        self.display_name = '%s %s' % (dir_and_name, self.suffix)
+        
         return super(Road, self).save(*args, **kwargs)
 
     class Meta:
