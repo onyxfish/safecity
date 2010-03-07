@@ -1,5 +1,7 @@
 import rapidsms
 
+from apps.locate.models import *
+
 class App (rapidsms.app.App):
     """
     This application attempts to exctract location information from the

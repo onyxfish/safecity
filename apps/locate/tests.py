@@ -10,10 +10,14 @@ class TestApp(TestScript):
     TODO: find better locations for test cases
     """
     apps = (App,)
-    fixtures = []
+    fixtures = [
+        'data/test_fixtures/locate.Road.json', 
+        'data/test_fixtures/locate.Intersection.json', 
+        'data/test_fixtures/locate.Block.json'
+        ]
     
     # Test locations
-    TROUT_AND_STUART = Point(-88.262078, 42.062726)
+    TROUT_AND_STEWART = Point(-88.262078, 42.062726)
     N_ELMA_AND_FIRST = Point(-88.262678, 42.060726)
     STEWART_AND_VICTOR = Point(-88.258378, 42.062826)
     TWELVE_HUNDRED_TROUT = Point(-88.262178, 42.061926)
@@ -32,17 +36,17 @@ class TestApp(TestScript):
             
     def testExtractIntersection(self):
         test_messages = {
-            'Trout & Stuart': self.TROUT_AND_STUART,
-            'Stuart & Trout': self.TROUT_AND_STUART,
-            'Trout and Stuart': self.TROUT_AND_STUART,
-            'Trout/Stuart': self.TROUT_AND_STUART,
-            'Corner of Trout and Stuart': self.TROUT_AND_STUART,
-            'On Trout near Stuart Ave': self.TROUT_AND_STUART,
-            'Trout Ave and Stuart Ave': self.TROUT_AND_STUART,
+            'Trout & Stuart': self.TROUT_AND_STEWART,
+            'Stuart & Trout': self.TROUT_AND_STEWART,
+            'Trout and Stuart': self.TROUT_AND_STEWART,
+            'Trout/Stuart': self.TROUT_AND_STEWART,
+            'Corner of Trout and Stuart': self.TROUT_AND_STEWART,
+            'On Trout near Stuart Ave': self.TROUT_AND_STEWART,
+            'Trout Ave and Stuart Ave': self.TROUT_AND_STEWART,
             'Elma and 1st': None, # Elma is ambigous
             'N Elma and 1st': self.N_ELMA_AND_FIRST,
-            'Something is happening at Trout and Stuart': self.TROUT_AND_STUART,
-            'They are at the corner of Trout and Stuart': self.TROUT_AND_STUART,
+            'Something is happening at Trout and Stuart': self.TROUT_AND_STEWART,
+            'They are at the corner of Trout and Stuart': self.TROUT_AND_STEWART,
         }
 
         for message, location in test_messages.items():
@@ -63,9 +67,9 @@ class TestApp(TestScript):
         
     def testExtractEdgeCases(self):
         test_messages = {
-            'N Trout and Stuart': self.TROUT_AND_STUART, # There is no N Trout, just Trout
+            'N Trout and Stuart': self.TROUT_AND_STEWART, # There is no N Trout, just Trout
             '1200 N Trout': self.TWELVE_HUNDRED_TROUT, # see previous
-            'Trout St and Stuart': self.TROUT_AND_STUART, # Trout is an Ave, not a St
+            'Trout St and Stuart': self.TROUT_AND_STEWART, # Trout is an Ave, not a St
             #'Trout, Stuart, and Victor': ?, # 3 roads
             #'X between Y and Z': ?,
             #'N X and Y': ?, # N X doesn't intersect Y, but S X does

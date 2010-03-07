@@ -1,0 +1,47 @@
+[
+    {
+        "pk": "Trout Ave", 
+        "model": "locate.road", 
+        "fields": {
+            "direction": "", 
+            "name": "Trout", 
+            "suffix": "Ave"
+        }
+    },
+    {
+        "pk": "Stewart Ave", 
+        "model": "locate.road", 
+        "fields": {
+            "direction": "", 
+            "name": "Stewart", 
+            "suffix": "Ave"
+        }
+    }, 
+    {
+        "pk": "N Elma Ave", 
+        "model": "locate.road", 
+        "fields": {
+            "direction": "N", 
+            "name": "Elma", 
+            "suffix": "Ave"
+        }
+    }, 
+    {
+        "pk": "1st St", 
+        "model": "locate.road", 
+        "fields": {
+            "direction": "", 
+            "name": "1st", 
+            "suffix": "St"
+        }
+    }, 
+    {
+        "pk": "Victor Ave", 
+        "model": "locate.road", 
+        "fields": {
+            "direction": "", 
+            "name": "Victor", 
+            "suffix": "Ave"
+        }
+    }
+]

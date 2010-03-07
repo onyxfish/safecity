@@ -84,7 +84,7 @@ class Intersection(models.Model):
     location = models.PointField()
     
     objects = models.GeoManager()
-    
+
 class Block(models.Model):
     """
     A single block of a road.

@@ -1,0 +1,35 @@
+[
+    {
+        "pk": 1, 
+        "model": "locate.intersection", 
+        "fields": {
+            "roads": [
+                "Trout Ave", 
+                "Stewart Ave"
+            ], 
+            "location": "POINT (-88.2620780000000025 42.0627259999999978)"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "locate.intersection", 
+        "fields": {
+            "roads": [
+                "N Elma Ave", 
+                "1st St"
+            ], 
+            "location": "POINT (-88.2626779999999940 42.0607259999999954)"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "locate.intersection", 
+        "fields": {
+            "roads": [
+                "Stewart Ave", 
+                "Victor Ave"
+            ], 
+            "location": "POINT (-88.2583779999999933 42.0628260000000012)"
+        }
+    }
+]
