@@ -90,6 +90,8 @@ class TigerNode(models.Model):
 class TigerBlock(models.Model):
     """
     Imported block informtaion from census TIGER data.
+    
+    TODO: is this really a "block"? or just a segment.
     """
     road = models.ForeignKey('TigerRoad')
     
