@@ -32,7 +32,7 @@ class Road(models.Model):
     """
     A unique named street in the city.
     """
-    display_name = models.CharField(
+    full_name = models.CharField(
         primary_key=True,
         max_length=100,
         help_text='A summarization of direction, name, and suffix.'
@@ -52,23 +52,33 @@ class Road(models.Model):
         help_text='Direction this road runs.')
         
     def save(self, *args, **kwargs):
+        """
+        Populate the full_name property before saving.
+        """
         if self.direction:
             dir_and_name = '%s %s' % (self.direction, self.name)
         else:
             dir_and_name = self.name
             
-        self.display_name = '%s %s' % (dir_and_name, self.suffix)
+        self.full_name = '%s %s' % (dir_and_name, self.suffix)
         
         return super(Road, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (('name', 'suffix', 'direction'),)
+        
+class RoadAlias(models.Model):
+    """
+    An alternate name for a Road.
+    """
+    name = models.CharField(
+        primary_key=True,
+        max_length=64,
+        help_text='Alternate name or spelling for a Road.')
+        
+    road = models.ForeignKey('Road')
 
 class Intersection(models.Model):
     """
     A place where two Roads intersect.
     """
-    # TODO: implement MAX of 2 for this join?
     roads = models.ManyToManyField('Road', related_name='intersections')
     
     location = models.PointField()
@@ -77,15 +87,51 @@ class Intersection(models.Model):
     
 class Block(models.Model):
     """
-    TODO
+    A single block of a road.
     """
+    number = models.CharField(
+        max_length=5,
+        help_text='Start address number for this block, e.g. 1600.'
+        )
+        
+    road = models.ForeignKey('Road')
+    
+    location = models.PointField()
+    
     objects = models.GeoManager()
+    
+    @classmethod
+    def block_num_from_addr(cls, addr):
+        digits = len(addr)
+        if digits > 2:
+            return '%s00' % addr[:-2]
+        else:
+            return '0'
 
 class Landmark(models.Model):
     """
-    TODO
-    """    
+    A location that is unique but not defined by streets, such as
+    a park, plaza, or building name.
+    """
+    name = models.CharField(
+        primary_key=True,
+        max_length=64,
+        help_text='Name of the landmark.')
+
+    location = models.PointField()
+    
     objects = models.GeoManager()
+    
+class LandmarkAlias(models.Model):
+    """
+    An alternate name or spelling for a Landmark.
+    """
+    name = models.CharField(
+        primary_key=True,
+        max_length=64,
+        help_text='Alternate name or spelling for a Landmark.')
+        
+    road = models.ForeignKey('Road')
         
 # Supplemental models for loading TIGER data
 

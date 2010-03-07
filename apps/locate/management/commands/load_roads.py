@@ -28,8 +28,8 @@ class Command(NoArgsCommand):
             
         for node in TigerNode.objects.all()[:100]:
             roads = []
-            for block in node.tigerblock_set.all():
-                tiger_road = block.road
+            for tiger_block in node.tigerblock_set.all():
+                tiger_road = tiger_block.road
                 
                 road, created = Road.objects.get_or_create(
                     name=tiger_road.name,
@@ -39,21 +39,18 @@ class Command(NoArgsCommand):
                 
                 roads.append(road)
                 
-                # block_addr = str(block.from_addr_left)
-                # block_name = Location.make_block_name(block_addr, road.direction, road.name)
-                # 
-                # block_loc, created = Location.objects.get_or_create(
-                #     name=block_name,
-                #     locale='BL',
-                #     )
+                addr = str(tiger_block.from_addr_left)
                 
                 # TODO - this effectively makes the exact location of a block random along
                 # its length... it really should compute the center fron endpoints, but thats...
                 # hard.
-                # block_loc.location = node.location
-                # block_loc.save()
-                # 
-                # block_loc.place_names.add(place)
+                block_num = Block.block_num_from_addr(addr)
+                if not Block.objects.filter(number=block_num, road=road):
+                    Block.objects.create(
+                        number=block_num,
+                        location=node.location,
+                        road=road,
+                        )
         
             roads = set(roads)
             
