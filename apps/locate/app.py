@@ -18,4 +18,3 @@ def extract_location(text):
     TODO
     """
     return None
-        

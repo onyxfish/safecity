@@ -29,6 +29,7 @@ h2. Misc TODO
 
 * logger app should not record phone numbers
 * need to gut and rewire the rapidsms logging system
+
 h2. Bugs in RapidSMS
 
 * Dashboard pages don't check that user is logged in
