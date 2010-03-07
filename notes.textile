@@ -18,6 +18,8 @@ h2. Process / Workflow
 
 h2. Custom Apps
 
+* TODO: floodwatch: watches for for more than 5 consecutive text messages
+* TODO: permaban: adds the ability for moderates to block numbers
 * locate: annotates location information onto message
 * TODO: services: refers the user to services near them (if no parsed location, try signup info)
 * signup: register, deregister, and update citizen info
@@ -27,7 +29,6 @@ h2. Misc TODO
 
 * logger app should not record phone numbers
 * need to gut and rewire the rapidsms logging system
-
 h2. Bugs in RapidSMS
 
 * Dashboard pages don't check that user is logged in
