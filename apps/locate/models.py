@@ -1,8 +1,8 @@
 from django.contrib.gis.db import models
 
 LOCALES = (
-    ('CR', 'Street Corner/Intersection'),
-    ('ST', 'Street Block'),
+    ('IN', 'Intersection'),
+    ('BL', 'Block'),
     ('PK', 'Public Park'),
     ('LM', 'Landmark'),
 )
@@ -47,7 +47,6 @@ class Location(models.Model):
         help_text='A description of the location. E.g. "Austin & Augusta," "Millenium Park," or "1600 N Augusta."')
         
     location = models.PointField(
-        null=True,
         help_text='Canonical location for this point.')
         
     locale = models.CharField(
@@ -56,6 +55,31 @@ class Location(models.Model):
         help_text='The type of location that this point describes.')
         
     objects = models.GeoManager()
+    
+    @classmethod
+    def make_intersection_name(cls, oneway, otherway):
+        """
+        Generate a standard name formate for a street intersection.
+        """
+        return '%s & %s' % (oneway, otherway)
+        
+    @classmethod
+    def make_block_name(cls, addr, road_dir, road_name):
+        """
+        Generate a standard name format for a street block.
+        """
+        digits =  len(addr)
+        if digits > 2:
+            block_num = '%s00' % addr[:-2]
+        else:
+            block_num = '0'
+            
+        if road_dir:
+            road_display = '%s. %s' % (road_dir, road_name)
+        else:
+            road_display = road_name
+        
+        return '%s block of %s' % (block_num, road_display)
         
 # Supplemental models for loading TIGER data
 
