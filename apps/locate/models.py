@@ -1,10 +1,12 @@
 from django.contrib.gis.db import models
 
-LOCALES = (
+PLACE_NAME_LOCALES = (
+    ('RD', 'ROAD'),
+)
+
+LOCATION_LOCALES = (
     ('IN', 'Intersection'),
     ('BL', 'Block'),
-    ('PK', 'Public Park'),
-    ('LM', 'Landmark'),
 )
 
 TIGER_ROAD_TYPES = (
@@ -35,6 +37,21 @@ TIGER_ROAD_DIRS = (
     ('NW', 'Northwest'),
 )
 
+class PlaceName(models.Model):
+    """
+    This table serves as an intermediate lookup table for identifying places
+    in text prior to identifying the intersection of block Location.
+    """
+    name = models.CharField(
+        primary_key=True,
+        max_length=100
+    )    
+        
+    locale = models.CharField(
+        max_length=2,
+        choices=PLACE_NAME_LOCALES,
+        help_text='The type of location that this name describes.')
+
 class Location(models.Model):
     """
     Predefined locations in the city that can be used for quick geo-lookups.
@@ -47,12 +64,15 @@ class Location(models.Model):
         help_text='A description of the location. E.g. "Austin & Augusta," "Millenium Park," or "1600 N Augusta."')
         
     location = models.PointField(
+        null=True,  # TODO: temp
         help_text='Canonical location for this point.')
         
     locale = models.CharField(
         max_length=2,
-        choices=LOCALES,
+        choices=LOCATION_LOCALES,
         help_text='The type of location that this point describes.')
+        
+    place_names = models.ManyToManyField('PlaceName')
         
     objects = models.GeoManager()
     

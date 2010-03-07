@@ -27,7 +27,12 @@ class Command(NoArgsCommand):
             roads = []
             for block in node.tigerblock_set.all():
                 road = block.road
-                roads.append(road.name)
+                roads.append(road)
+                
+                place, created = PlaceName.objects.get_or_create(
+                    name=road.name.lower(),
+                    locale='ST',
+                )
                 
                 block_addr = str(block.from_addr_left)
                 block_name = Location.make_block_name(block_addr, road.direction, road.name)
@@ -37,6 +42,8 @@ class Command(NoArgsCommand):
                     # location=,
                     locale='BL',
                     )
+                
+                block_loc.place_names.add(place)
         
             roads = list(set(roads))
             
@@ -44,11 +51,24 @@ class Command(NoArgsCommand):
                 for otherway in roads:
                     if oneway == otherway:
                         continue
+
+                    oneway_place, created = PlaceName.objects.get_or_create(
+                        name=oneway.name.lower(),
+                        locale='ST',
+                    )    
+
+                    otherway_place, created = PlaceName.objects.get_or_create(
+                        name=otherway.name.lower(),
+                        locale='ST',
+                    )
                         
-                    intersection_name = Location.make_intersection_name(oneway, otherway)
+                    intersection_name = Location.make_intersection_name(oneway.name, otherway.name)
                     
                     intersection, created = Location.objects.get_or_create(
                         name=intersection_name,
                         # location=,
                         locale='IN',
                         )
+                        
+                    intersection.place_names.add(oneway_place)    
+                    intersection.place_names.add(otherway_place)
