@@ -51,6 +51,9 @@ class Road(models.Model):
         choices=TIGER_ROAD_DIRS,
         help_text='Direction this road runs.')
         
+    def __unicode__(self):
+        return self.full_name
+        
     def save(self, *args, **kwargs):
         """
         Populate the full_name property before saving.

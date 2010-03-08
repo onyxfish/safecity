@@ -1,4 +1,5 @@
 from django.contrib.gis.geos import Point
+from rapidsms.router import Router
 from rapidsms.tests.scripted import TestScript
 
 from locate.app import *
@@ -22,36 +23,43 @@ class TestApp(TestScript):
     STEWART_AND_VICTOR = Point(-88.258378, 42.062826)
     TWELVE_HUNDRED_TROUT = Point(-88.262178, 42.061926)
     
+    def setUp(self):
+        """
+        TODO: fix this terrible hack for testing the app's methods
+        """
+        self.router = Router()
+        self.app = App(self.router)
+    
     def testExtractIncompleteInfo(self):
         test_messages = {
             # Incomplete info
             '': None,
             'There is no location in this message.': None,
-            'This message just has a street; Augusta.': None,
+            'This message just has a street; Trout.': None,
         }
         
         for message, location in test_messages.items():
             print 'Testing: "%s"' % message
-            self.assertEqual(extract_location(message), location)
+            self.assertEqual(self.app._extract_location(message), location)
             
     def testExtractIntersection(self):
         test_messages = {
-            'Trout & Stuart': self.TROUT_AND_STEWART,
-            'Stuart & Trout': self.TROUT_AND_STEWART,
-            'Trout and Stuart': self.TROUT_AND_STEWART,
-            'Trout/Stuart': self.TROUT_AND_STEWART,
-            'Corner of Trout and Stuart': self.TROUT_AND_STEWART,
-            'On Trout near Stuart Ave': self.TROUT_AND_STEWART,
-            'Trout Ave and Stuart Ave': self.TROUT_AND_STEWART,
+            'Trout & Stewart': self.TROUT_AND_STEWART,
+            'Stewart & Trout': self.TROUT_AND_STEWART,
+            'Trout and Stewart': self.TROUT_AND_STEWART,
+            'Trout/Stewart': self.TROUT_AND_STEWART,
+            'Corner of Trout and Stewart': self.TROUT_AND_STEWART,
+            'On Trout near Stewart Ave': self.TROUT_AND_STEWART,
+            'Trout Ave and Stewart Ave': self.TROUT_AND_STEWART,
             'Elma and 1st': None, # Elma is ambigous
             'N Elma and 1st': self.N_ELMA_AND_FIRST,
-            'Something is happening at Trout and Stuart': self.TROUT_AND_STEWART,
-            'They are at the corner of Trout and Stuart': self.TROUT_AND_STEWART,
+            'Something is happening at Trout and Stewart': self.TROUT_AND_STEWART,
+            'They are at the corner of Trout and Stewart': self.TROUT_AND_STEWART,
         }
 
         for message, location in test_messages.items():
             print 'Testing: "%s"' % message
-            self.assertEqual(extract_location(message), location)
+            self.assertEqual(self.app._extract_location(message), location)
         
     def testExtractBlock(self):
         test_messages = {
@@ -63,19 +71,19 @@ class TestApp(TestScript):
 
         for message, location in test_messages.items():
             print 'Testing: "%s"' % message
-            self.assertEqual(extract_location(message), location)
+            self.assertEqual(self.app._extract_location(message), location)
         
     def testExtractEdgeCases(self):
         test_messages = {
-            'N Trout and Stuart': self.TROUT_AND_STEWART, # There is no N Trout, just Trout
+            'N Trout and Stewart': self.TROUT_AND_STEWART, # There is no N Trout, just Trout
             '1200 N Trout': self.TWELVE_HUNDRED_TROUT, # see previous
-            'Trout St and Stuart': self.TROUT_AND_STEWART, # Trout is an Ave, not a St
-            #'Trout, Stuart, and Victor': ?, # 3 roads
+            'Trout St and Stewart': self.TROUT_AND_STEWART, # Trout is an Ave, not a St
+            #'Trout, Stewart, and Victor': ?, # 3 roads
             #'X between Y and Z': ?,
             #'N X and Y': ?, # N X doesn't intersect Y, but S X does
         }
 
         for message, location in test_messages.items():
             print 'Testing: "%s"' % message
-            self.assertEqual(extract_location(message), location)
+            self.assertEqual(self.app._extract_location(message), location)
             
