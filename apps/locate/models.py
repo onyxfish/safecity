@@ -13,6 +13,7 @@ TIGER_ROAD_TYPES = (
     ('St', 'Street'),
     ('Ter', 'Terrace'),
     ('Trl', 'Trl'),         # ???
+    ('Walk', 'Walk'),       # ???
     ('Way', 'Way'),
     ('Xing', 'Crossing')
 )
