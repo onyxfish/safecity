@@ -26,7 +26,7 @@ class Command(NoArgsCommand):
             Intersection.objects.all().delete()
             Road.objects.all().delete()
             
-        for node in TigerNode.objects.all()[:100]:
+        for node in TigerNode.objects.all():
             roads = []
             for tiger_block in node.tigerblock_set.all():
                 tiger_road = tiger_block.road
