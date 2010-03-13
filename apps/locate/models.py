@@ -84,8 +84,7 @@ class Block(models.Model):
     """
     A single block of a road.
     """
-    number = models.CharField(
-        max_length=5,
+    number = models.IntegerField(
         help_text='Start address number for this block, e.g. 1600.'
         )
         
@@ -95,13 +94,8 @@ class Block(models.Model):
     
     objects = models.GeoManager()
     
-    @classmethod
-    def block_num_from_addr(cls, addr):
-        digits = len(addr)
-        if digits > 2:
-            return '%s00' % addr[:-2]
-        else:
-            return '0'
+    def __unicode__(self):
+        return ' '.join([str(self.number), self.road])
 
 class Landmark(models.Model):
     """

@@ -3,13 +3,12 @@ from rapidsms import log as rlog
 log = rlog.Logger(level='Debug')
 from optparse import make_option
 import os
-import sys  # TEMP
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import Point
 from django.core.management.base import NoArgsCommand, CommandError
-from django.db import IntegrityError
+from django.db import connection, transaction
 
 from apps.locate.models import *
 
@@ -47,44 +46,40 @@ class Command(NoArgsCommand):
             road_suffix_direction = feature.get('SUF_DIR')
             from_cross_road = feature.get('F_CROSS')
             to_cross_road = feature.get('T_CROSS')
-            from_addr_left = feature.get('LOGICLF')
-            to_addr_left = feature.get('LOGICLT')
-            from_addr_right = feature.get('LOGICRF')
-            to_addr_right = feature.get('LOGICRT')
+            from_addr_left = feature.get('L_F_ADD')
+            to_addr_left = feature.get('L_T_ADD')
+            from_addr_right = feature.get('R_F_ADD')
+            to_addr_right = feature.get('R_T_ADD')
             linestring = feature.geom
-                
+            
+            # Create roads    
             road = self.get_or_create_road(
                 road_prefix_direction, road_name, road_type, road_suffix_direction)
             
             f_road = self.create_road_from_cross_road(from_cross_road)
             t_road = self.create_road_from_cross_road(to_cross_road)
             
-            # nodes = []
-            # for pt in linestring.coords:
-            #     point = Point(pt)
-            #     try:
-            #         n = TigerNode.objects.filter(location__equals=point)[0]
-            #     except IndexError:
-            #         n = TigerNode.objects.create(location=point)
-            #     nodes.append(n)
-            # 
-            # segment = TigerSegment.objects.create(
-            #     road=road,
-            #     linestring=linestring.geos,
-            #     from_addr_left=from_addr_left,
-            #     to_addr_left=to_addr_left,
-            #     from_addr_right=from_addr_right,
-            #     to_addr_right=to_addr_right
-            #     )
-            # 
-            # i = 0
-            # for node in nodes:
-            #     TigerSegmentNode.objects.create(
-            #         node=node,
-            #         segment=segment,
-            #         sequence=i
-            #     )
-            #     i += 1
+            # Create blocks
+            block_number = self.get_block_number(
+                from_addr_left, to_addr_left, from_addr_right, to_addr_right)
+                
+            # Get center-point of block
+            location = self.estimate_point_along_linestring(linestring, 0.50)
+            
+            try:
+                Block.objects.get(
+                    number=block_number,
+                    road=road
+                    )
+            except Block.DoesNotExist:
+                Block.objects.create(
+                    number=block_number,
+                    road=road,
+                    location=location
+                    )
+            
+            # Create intersections
+            # TODO
         
     def get_or_create_road(self, road_prefix_direction, road_name, road_type, road_suffix_direction):
         """
@@ -119,3 +114,41 @@ class Command(NoArgsCommand):
             road = None
             
         return road
+        
+    def get_block_number(self, from_addr_left, to_addr_left, from_addr_right, to_addr_right):
+        """
+        Gets the number of a block from its address range.
+        """
+        if from_addr_left < from_addr_right:
+            from_addr = from_addr_left
+        else:
+            from_addr = from_addr_right
+
+        if to_addr_left > to_addr_right:
+            to_addr = to_addr_left
+        else:
+            to_addr = to_addr_right
+            
+        if to_addr < from_addr:
+            raise Exception('Unexpected data: to_addr < from_addr')
+            
+        def floor_to_hundreds(x):
+             return (x / 100) * 100
+            
+        return floor_to_hundreds(from_addr)
+        
+    def estimate_point_along_linestring(self, linestring, percent):
+        """
+        Use PostGIS's ST_Line_Interpolate_Point function to estimate
+        a point along a linestring.
+        """
+        cursor = connection.cursor()
+
+        linestring = linestring.wkt
+
+        cursor.execute("\
+            SELECT ST_AsText(ST_Line_Interpolate_Point(the_line, %f))\
+        	    FROM (SELECT ST_GeomFromEWKT('%s') as the_line) As foo;" % (percent, linestring))
+        row = cursor.fetchone()
+
+        return row[0]
