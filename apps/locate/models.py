@@ -1,34 +1,5 @@
 from django.contrib.gis.db import models
 
-TIGER_ROAD_TYPES = (
-    ('Ave', 'Avenue'),
-    ('Blvd', 'Boulevard'),
-    ('Cir', 'Circle'),
-    ('Ct', 'Court'),
-    ('Dr', 'Drive'),
-    ('Ln', 'Lane'),
-    ('Pky', 'Parkway'),
-    ('Pl', 'Place'),
-    ('Rd', 'Road'),
-    ('St', 'Street'),
-    ('Ter', 'Terrace'),
-    ('Trl', 'Trl'),         # ???
-    ('Walk', 'Walk'),       # ???
-    ('Way', 'Way'),
-    ('Xing', 'Crossing')
-)
-
-TIGER_ROAD_DIRS = (
-    ('N', 'North'),
-    ('NE', 'Northeast'),
-    ('E', 'East'),
-    ('SE', 'Southeast'),
-    ('S', 'South'),
-    ('SW', 'Southwest'),
-    ('W', 'West'),
-    ('NW', 'Northwest'),
-)
-
 class Road(models.Model):
     """
     A unique named street in the city.
@@ -36,21 +7,24 @@ class Road(models.Model):
     full_name = models.CharField(
         primary_key=True,
         max_length=100,
-        help_text='A summarization of direction, name, and suffix.'
+        help_text='A cat\'d version of prefix_direction, name, road_type, and suffix_direction.'
     )
     
-    direction = models.CharField(
+    prefix_direction = models.CharField(
         max_length=2,
-        choices=TIGER_ROAD_DIRS,
         help_text='Direction this road runs.')
     
     name = models.CharField(
         max_length=64,
         help_text='The road name.')
 
-    suffix = models.CharField(
+    road_type = models.CharField(
         max_length=4,
         help_text='The road type, e.g. Ave.')
+
+    suffix_direction = models.CharField(
+        max_length=2,
+        help_text='Direction this road runs.')
         
     def __unicode__(self):
         return self.full_name
@@ -60,18 +34,30 @@ class Road(models.Model):
         Populate the full_name property before saving.
         """
         if not self.full_name:
-            self.full_name = Road.make_full_name(self.direction, self.name, self.suffix)
+            self.full_name = Road.make_full_name(
+                self.prefix_direction, self.name, self.road_type, self.suffix_direction)
         
         return super(Road, self).save(*args, **kwargs)
         
     @classmethod
-    def make_full_name(cls, direction, name, suffix):
-        if direction:
-            dir_and_name = '%s %s' % (direction, name)
-        else:
-            dir_and_name = name
+    def make_full_name(cls, prefix_direction, name, road_type, suffix_direction):
+        """
+        Generate a unique road ID based on name parts.
+        """
+        bits = []
         
-        return '%s %s' % (dir_and_name, suffix)
+        if prefix_direction:
+            bits.append(prefix_direction)
+        
+        bits.append(name)
+        
+        if road_type:
+            bits.append(road_type)
+            
+        if suffix_direction:
+            bits.append(suffix_direction)
+        
+        return ' '.join(bits)
         
 class RoadAlias(models.Model):
     """
@@ -144,6 +130,35 @@ class LandmarkAlias(models.Model):
         
 # Intermediate models for loading TIGER data
 
+# TIGER_ROAD_TYPES = (
+#     ('Ave', 'Avenue'),
+#     ('Blvd', 'Boulevard'),
+#     ('Cir', 'Circle'),
+#     ('Ct', 'Court'),
+#     ('Dr', 'Drive'),
+#     ('Ln', 'Lane'),
+#     ('Pky', 'Parkway'),
+#     ('Pl', 'Place'),
+#     ('Rd', 'Road'),
+#     ('St', 'Street'),
+#     ('Ter', 'Terrace'),
+#     ('Trl', 'Trl'),         # ???
+#     ('Walk', 'Walk'),       # ???
+#     ('Way', 'Way'),
+#     ('Xing', 'Crossing')
+# )
+# 
+# TIGER_ROAD_DIRS = (
+#     ('N', 'North'),
+#     ('NE', 'Northeast'),
+#     ('E', 'East'),
+#     ('SE', 'Southeast'),
+#     ('S', 'South'),
+#     ('SW', 'Southwest'),
+#     ('W', 'West'),
+#     ('NW', 'Northwest'),
+# )
+
 class TigerNode(models.Model):
     """
     Imported node/point information from census TIGER data.
@@ -182,4 +197,6 @@ class TigerSegmentNode(models.Model):
     segment = models.ForeignKey('TigerSegment')
     sequence = models.IntegerField()
     
-    
+# Intermediate tables for loading centerline data
+
+# class 
