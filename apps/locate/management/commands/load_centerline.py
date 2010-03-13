@@ -46,40 +46,25 @@ class Command(NoArgsCommand):
             road_suffix_direction = feature.get('SUF_DIR')
             from_cross_road = feature.get('F_CROSS')
             to_cross_road = feature.get('T_CROSS')
-            from_addr_left = feature.get('L_F_ADD')
-            to_addr_left = feature.get('L_T_ADD')
-            from_addr_right = feature.get('R_F_ADD')
-            to_addr_right = feature.get('R_T_ADD')
             linestring = feature.geom
             
-            # Create roads    
+            # Create road for this feature
             road = self.get_or_create_road(
                 road_prefix_direction, road_name, road_type, road_suffix_direction)
             
-            f_road = self.create_road_from_cross_road(from_cross_road)
-            t_road = self.create_road_from_cross_road(to_cross_road)
-            
-            # Create blocks
-            block_number = self.get_block_number(
-                from_addr_left, to_addr_left, from_addr_right, to_addr_right)
+            # Create a block for this feature
+            self.create_block_for_feature(feature, road)
+        
+            # Create roads from intersecting features
+            f_road = self.get_road_for_intersection(from_cross_road)
+            if f_road:
+                location = Point(linestring.coords[0])
+                self.create_intersection(road, f_road, location)
                 
-            # Get center-point of block
-            location = self.estimate_point_along_linestring(linestring, 0.50)
-            
-            try:
-                Block.objects.get(
-                    number=block_number,
-                    road=road
-                    )
-            except Block.DoesNotExist:
-                Block.objects.create(
-                    number=block_number,
-                    road=road,
-                    location=location
-                    )
-            
-            # Create intersections
-            # TODO
+            t_road = self.get_road_for_intersection(to_cross_road)
+            if t_road:
+                location = Point(linestring.coords[-1])
+                self.create_intersection(road, t_road, location)
         
     def get_or_create_road(self, road_prefix_direction, road_name, road_type, road_suffix_direction):
         """
@@ -100,7 +85,7 @@ class Command(NoArgsCommand):
                 
         return road
         
-    def create_road_from_cross_road(self, cross):
+    def get_road_for_intersection(self, cross):
         """
         Creates a road from the centerline F_CROSS or T_CROSS strings,
         if those strings indicate an intersection w/ another road.
@@ -115,6 +100,34 @@ class Command(NoArgsCommand):
             
         return road
         
+    def create_block_for_feature(self, feature, road):  
+        """
+        Creates a block from a given feature.
+        """     
+        from_addr_left = feature.get('L_F_ADD')
+        to_addr_left = feature.get('L_T_ADD')
+        from_addr_right = feature.get('R_F_ADD')
+        to_addr_right = feature.get('R_T_ADD')
+        linestring = feature.geom
+        
+        block_number = self.get_block_number(
+            from_addr_left, to_addr_left, from_addr_right, to_addr_right)
+            
+        # Get center-point of block
+        location = self.estimate_point_along_linestring(linestring, 0.50)
+        
+        try:
+            Block.objects.get(
+                number=block_number,
+                road=road
+                )
+        except Block.DoesNotExist:
+            Block.objects.create(
+                number=block_number,
+                road=road,
+                location=location
+                )
+                
     def get_block_number(self, from_addr_left, to_addr_left, from_addr_right, to_addr_right):
         """
         Gets the number of a block from its address range.
@@ -128,13 +141,13 @@ class Command(NoArgsCommand):
             to_addr = to_addr_left
         else:
             to_addr = to_addr_right
-            
+
         if to_addr < from_addr:
             raise Exception('Unexpected data: to_addr < from_addr')
-            
+
         def floor_to_hundreds(x):
              return (x / 100) * 100
-            
+
         return floor_to_hundreds(from_addr)
         
     def estimate_point_along_linestring(self, linestring, percent):
@@ -152,3 +165,14 @@ class Command(NoArgsCommand):
         row = cursor.fetchone()
 
         return row[0]
+        
+    def create_intersection(self, oneway, otherway, location):
+        """
+        Create an intersection for two Roads.
+        """
+        intersection = Intersection.objects.create(
+            location=location
+            )
+            
+        intersection.roads.add(oneway)    
+        intersection.roads.add(otherway)
