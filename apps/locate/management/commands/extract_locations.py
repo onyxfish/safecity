@@ -24,22 +24,13 @@ class Command(NoArgsCommand):
             logging.info("Clearing all road locations.")
             Block.objects.all().delete()
             Intersection.objects.all().delete()
-            Road.objects.all().delete()
             
         for node in TigerNode.objects.all():
             roads = []
-            for tiger_block in node.tigerblock_set.all():
-                tiger_road = tiger_block.road
+            for tiger_segment in node.tigerblock_set.all():
+                roads.append(tiger_segment.road)
                 
-                road, created = Road.objects.get_or_create(
-                    name=tiger_road.name,
-                    direction=tiger_road.direction,
-                    suffix=tiger_road.suffix
-                    )
-                
-                roads.append(road)
-                
-                addr = str(tiger_block.from_addr_left)
+                addr = str(tiger_segment.from_addr_left)
                 
                 # TODO - this effectively makes the exact location of a block random along
                 # its length... it really should compute the center fron endpoints, but thats...

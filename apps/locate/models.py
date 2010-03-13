@@ -39,6 +39,11 @@ class Road(models.Model):
         help_text='A summarization of direction, name, and suffix.'
     )
     
+    direction = models.CharField(
+        max_length=2,
+        choices=TIGER_ROAD_DIRS,
+        help_text='Direction this road runs.')
+    
     name = models.CharField(
         max_length=64,
         help_text='The road name.')
@@ -46,11 +51,6 @@ class Road(models.Model):
     suffix = models.CharField(
         max_length=4,
         help_text='The road type, e.g. Ave.')
-    
-    direction = models.CharField(
-        max_length=2,
-        choices=TIGER_ROAD_DIRS,
-        help_text='Direction this road runs.')
         
     def __unicode__(self):
         return self.full_name
@@ -59,14 +59,19 @@ class Road(models.Model):
         """
         Populate the full_name property before saving.
         """
-        if self.direction:
-            dir_and_name = '%s %s' % (self.direction, self.name)
-        else:
-            dir_and_name = self.name
-            
-        self.full_name = '%s %s' % (dir_and_name, self.suffix)
+        if not self.full_name:
+            self.full_name = Road.make_full_name(self.direction, self.name, self.suffix)
         
         return super(Road, self).save(*args, **kwargs)
+        
+    @classmethod
+    def make_full_name(cls, direction, name, suffix):
+        if direction:
+            dir_and_name = '%s %s' % (direction, name)
+        else:
+            dir_and_name = name
+        
+        return '%s %s' % (dir_and_name, suffix)
         
 class RoadAlias(models.Model):
     """
@@ -137,27 +142,27 @@ class LandmarkAlias(models.Model):
         
     road = models.ForeignKey('Road')
         
-# Supplemental models for loading TIGER data
+# Intermediate models for loading TIGER data
 
-class TigerRoad(models.Model):
-    """
-    Imported road information from census TIGER data.
-    """
-    name = models.CharField(
-        max_length=100,
-        help_text='The road name.')
-    
-    suffix = models.CharField(
-        max_length=4,
-        help_text='The road type, e.g. Ave.')
-        
-    direction = models.CharField(
-        max_length=2,
-        choices=TIGER_ROAD_DIRS,
-        help_text='Direction this road runs.')
-    
-    class Meta:
-        unique_together = (('name', 'suffix', 'direction'),)
+# class TigerRoad(models.Model):
+    # """
+    # Imported road information from census TIGER data.
+    # """
+    # name = models.CharField(
+    #     max_length=100,
+    #     help_text='The road name.')
+    # 
+    # suffix = models.CharField(
+    #     max_length=4,
+    #     help_text='The road type, e.g. Ave.')
+    #     
+    # direction = models.CharField(
+    #     max_length=2,
+    #     choices=TIGER_ROAD_DIRS,
+    #     help_text='Direction this road runs.')
+    # 
+    # class Meta:
+    #     unique_together = (('name', 'suffix', 'direction'),)
 
 class TigerNode(models.Model):
     """
@@ -167,18 +172,30 @@ class TigerNode(models.Model):
 
     objects = models.GeoManager()
 
-class TigerBlock(models.Model):
+class TigerSegment(models.Model):
     """
-    Imported block informtaion from census TIGER data.
+    Imported segment informtaion from census TIGER data.
     
-    TODO: is this really a "block"? or just a segment.
+    Note: A segment may contain multiple blocks.
     """
-    road = models.ForeignKey('TigerRoad')
+    road = models.ForeignKey('Road')
     
     nodes = models.ManyToManyField('TigerNode',
+        through='TigerSegmentNode',
         help_text='Two or more points that define this block.')
     
     from_addr_left = models.IntegerField()
     to_addr_left = models.IntegerField()
     from_addr_right = models.IntegerField()
     to_addr_right = models.IntegerField()
+    
+class TigerSegmentNode(models.Model):
+    """
+    Intermediate table for ManyToMany relationship between
+    TigerNode and TigerSegment that adds a sequence column.
+    """
+    node = models.ForeignKey('TigerNode')
+    segment = models.ForeignKey('TigerSegment')
+    sequence = models.IntegerField()
+    
+    

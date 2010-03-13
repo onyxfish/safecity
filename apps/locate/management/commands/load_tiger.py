@@ -8,8 +8,9 @@ from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import Point
 from django.core.management.base import NoArgsCommand, CommandError
+from django.db import IntegrityError
 
-from apps.locate.models import TigerRoad, TigerNode, TigerBlock
+from apps.locate.models import *
 
 DATA_DIR = 'data/tiger'
 
@@ -24,9 +25,9 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         if options['clear']:
             log.write('', 'info', 'Clearing all TIGER data.')
-            TigerBlock.objects.all().delete()
+            TigerSegment.objects.all().delete()
             TigerNode.objects.all().delete()
-            TigerRoad.objects.all().delete()
+            Road.objects.all().delete()
         
         shapefile = os.path.join(DATA_DIR, 'cookcounty/tgr17031lkA.shp')
             
@@ -46,12 +47,17 @@ class Command(NoArgsCommand):
             # TODO: bad data?
             if not road_name:
                 continue
-            
-            road, created = TigerRoad.objects.get_or_create(
-                name=road_name,
-                suffix=road_type,
-                direction=road_dir
-                )
+                
+            full_name = Road.make_full_name(road_dir, road_name, road_type)
+            try:
+                road = Road.objects.get(full_name=full_name)
+            except Road.DoesNotExist:
+                road = Road.objects.create(
+                    full_name=full_name,
+                    direction=road_dir,
+                    name=road_name,
+                    suffix=road_type
+                    )
             
             nodes = []
             for pt in linestring.coords:
@@ -61,14 +67,20 @@ class Command(NoArgsCommand):
                 except IndexError:
                     n = TigerNode.objects.create(location=point)
                 nodes.append(n)
-                
-            block, created = TigerBlock.objects.get_or_create(
+            
+            segment = TigerSegment.objects.create(
                 road=road,
                 from_addr_left=from_addr_left,
                 to_addr_left=to_addr_left,
                 from_addr_right=from_addr_right,
                 to_addr_right=to_addr_right
                 )
-                
+            
+            i = 0
             for node in nodes:
-                block.nodes.add(node)
+                TigerSegmentNode.objects.create(
+                    node=node,
+                    segment=segment,
+                    sequence=i
+                )
+                i += 1
