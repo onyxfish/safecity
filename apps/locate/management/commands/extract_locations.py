@@ -4,7 +4,9 @@ log = logging.getLogger('safecity.locate.load_streets')
 from optparse import make_option
 
 from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import NoArgsCommand, CommandError
+from django.db import connection, transaction
 
 from apps.locate.models import *
 
@@ -42,7 +44,7 @@ class Command(NoArgsCommand):
                     except Block.DoesNotExist:
                         Block.objects.create(
                             number=block[0],
-                            location=block[1],
+                            location=GEOSGeometry(block[1]),
                             road=road,
                             )
         
@@ -87,22 +89,50 @@ class Command(NoArgsCommand):
             end = segment.to_addr_left
         else:
             end = segment.to_addr_right
-            
-        # Awesome Python magic found here:
-        # http://mail.python.org/pipermail/tutor/2003-August/024395.html    
-        start = round(start, -2)
-        end = round(end, -2)
         
-        block_count = (end - start) / 100
-        node_count = segment.nodes.count()
-            
-        blocks = [] 
+        if start > end:
+            start, end = end, start
+            backwards_street = True
+        else:
+            backwards_street = False
         
-        i = start
-        while i <= end:
-            # TODO: fix location hack
-            node = TigerSegmentNode.objects.get(segment=segment, sequence=0).node
-            blocks.append((str(int(i)), node.location))
-            i += 100
+        start = floor_to_hundreds(start)
+        end = floor_to_hundreds(end)
+        
+        block_count = ((end - start) / 100) + 1
+        fraction = 1.0 / block_count    # Divide the line into equal segments
+            
+        blocks = []
+                
+        i = 0
+        for i in range(0, block_count):
+            # Find the point halfway along this fraction's portion of the line
+            percent = (fraction * i) + fraction * 0.5
+            
+            # For streets running the opposite direction, invert the fraction
+            if backwards_street:
+                percent = 1.0 - percent
+                            
+            location = self.estimate_point_along_segment(segment, percent)
+            blocks.append((str(int(start + i * 100)), location))
         
         return blocks
+        
+    def estimate_point_along_segment(self, segment, percent):
+        """
+        Use PostGIS's ST_Line_Interpolate_Point function to estimate
+        a point along a linestring.
+        """
+        cursor = connection.cursor()
+        
+        linestring = segment.linestring.wkt
+
+        cursor.execute("\
+            SELECT ST_AsText(ST_Line_Interpolate_Point(the_line, %f))\
+        	    FROM (SELECT ST_GeomFromEWKT('%s') as the_line) As foo;" % (percent, linestring))
+        row = cursor.fetchone()
+
+        return row[0]
+        
+def floor_to_hundreds(x):
+     return (x / 100) * 100

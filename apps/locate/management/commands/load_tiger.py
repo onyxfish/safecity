@@ -70,6 +70,7 @@ class Command(NoArgsCommand):
             
             segment = TigerSegment.objects.create(
                 road=road,
+                linestring=linestring.geos,
                 from_addr_left=from_addr_left,
                 to_addr_left=to_addr_left,
                 from_addr_right=from_addr_right,

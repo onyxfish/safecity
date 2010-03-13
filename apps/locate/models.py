@@ -160,6 +160,10 @@ class TigerSegment(models.Model):
     """
     road = models.ForeignKey('Road')
     
+    linestring = models.LineStringField(
+        help_text='The original linestring for this segment.'
+        )
+    
     nodes = models.ManyToManyField('TigerNode',
         through='TigerSegmentNode',
         help_text='Two or more points that define this block.')
