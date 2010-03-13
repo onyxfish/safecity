@@ -144,26 +144,6 @@ class LandmarkAlias(models.Model):
         
 # Intermediate models for loading TIGER data
 
-# class TigerRoad(models.Model):
-    # """
-    # Imported road information from census TIGER data.
-    # """
-    # name = models.CharField(
-    #     max_length=100,
-    #     help_text='The road name.')
-    # 
-    # suffix = models.CharField(
-    #     max_length=4,
-    #     help_text='The road type, e.g. Ave.')
-    #     
-    # direction = models.CharField(
-    #     max_length=2,
-    #     choices=TIGER_ROAD_DIRS,
-    #     help_text='Direction this road runs.')
-    # 
-    # class Meta:
-    #     unique_together = (('name', 'suffix', 'direction'),)
-
 class TigerNode(models.Model):
     """
     Imported node/point information from census TIGER data.
