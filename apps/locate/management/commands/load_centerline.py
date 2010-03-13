@@ -48,6 +48,12 @@ class Command(NoArgsCommand):
             to_cross_road = feature.get('T_CROSS')
             linestring = feature.geom
             
+            # The vast majority of these unnammed roads are at O'Hare.
+            # If they don't have names then people can't refer to them anyway
+            # So we just skip them.
+            if not road_name:
+                continue
+            
             # Create road for this feature
             road = self.get_or_create_road(
                 road_prefix_direction, road_name, road_type, road_suffix_direction)
