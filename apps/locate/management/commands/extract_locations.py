@@ -80,24 +80,7 @@ class Command(NoArgsCommand):
         Returns a list of tuples. Each tuple is of the form:
         (block_num, location).
         """
-        if segment.from_addr_left < segment.from_addr_right:
-            start = segment.from_addr_left
-        else:
-            start = segment.from_addr_right
-            
-        if segment.to_addr_left > segment.to_addr_right:
-            end = segment.to_addr_left
-        else:
-            end = segment.to_addr_right
-        
-        if start > end:
-            start, end = end, start
-            backwards_street = True
-        else:
-            backwards_street = False
-        
-        start = floor_to_hundreds(start)
-        end = floor_to_hundreds(end)
+        start, end, backwards_segment = self.determine_range_of_segment(segment)
         
         block_count = ((end - start) / 100) + 1
         fraction = 1.0 / block_count    # Divide the line into equal segments
@@ -110,13 +93,41 @@ class Command(NoArgsCommand):
             percent = (fraction * i) + fraction * 0.5
             
             # For streets running the opposite direction, invert the fraction
-            if backwards_street:
+            if backwards_segment:
                 percent = 1.0 - percent
                             
             location = self.estimate_point_along_segment(segment, percent)
             blocks.append((str(int(start + i * 100)), location))
         
         return blocks
+        
+    def determine_range_of_segment(self, segment):
+        """
+        Uses addresses for a given segment to determine what blocks
+        are covered by it.
+        
+        Returns a tuple of the form (start, end, backwards_segment).
+        """
+        if segment.from_addr_left < segment.from_addr_right:
+            start = segment.from_addr_left
+        else:
+            start = segment.from_addr_right
+            
+        if segment.to_addr_left > segment.to_addr_right:
+            end = segment.to_addr_left
+        else:
+            end = segment.to_addr_right
+        
+        if start > end:
+            start, end = end, start
+            backwards_segment = True
+        else:
+            backwards_segment = False
+        
+        start = floor_to_hundreds(start)
+        end = floor_to_hundreds(end)
+        
+        return (start, end, backwards_segment)
         
     def estimate_point_along_segment(self, segment, percent):
         """
