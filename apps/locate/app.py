@@ -205,11 +205,10 @@ class App(rapidsms.app.App):
         """
         Takes a fully-substituted string and attempts to determine an exact
         location.
+        
+        TODO: more patterns
         """
         args, pattern = zip(*location_tokens)
-        
-        print args
-        print pattern
         
         if pattern == (TOKEN_ROAD_ARGS, TOKEN_ROAD_ARGS):
             oneway = args[0]
@@ -224,8 +223,8 @@ class App(rapidsms.app.App):
             
     def _get_intersection(self, oneway_args, otherway_args):
         """
-        Tries various combination of name parameters in order to try to find
-        a an intersection amongst the named roads
+        Try various combination of name parameters in order to try to find
+        an intersection amongst the named roads.
         """
         try_again = True
         
@@ -240,18 +239,18 @@ class App(rapidsms.app.App):
             def trim_arguments():
                 # First try trimming suffix directions
                 if 'suffix_direction' in oneway_args or 'suffix_direction' in otherway_args:
-                    del oneway_args['suffix_direction']
-                    del otherway_args['suffix_direction']
+                    if 'suffix_direction' in oneway_args: del oneway_args['suffix_direction']
+                    if 'suffix_direction' in otherway_args: del otherway_args['suffix_direction']
                     return True
                 # Then try trimming prefix directions
                 elif 'prefix_direction' in oneway_args or 'prefix_direction' in otherway_args:
-                    del oneway_args['prefix_direction']
-                    del otherway_args['prefix_direction']
+                    if 'prefix_direction' in oneway_args: del oneway_args['prefix_direction']
+                    if 'prefix_direction' in otherway_args: del otherway_args['prefix_direction']
                     return True
                 # Lastly try trimming street types
                 elif 'road_type' in oneway_args or 'road_type' in otherway_args:
-                    del oneway_args['road_type']
-                    del otherway_args['road_type']
+                    if 'road_type' in oneway_args: del oneway_args['road_type']
+                    if 'road_type' in otherway_args: del otherway_args['road_type']
                     return True
                 else:
                     # Nothing left to try...
@@ -261,19 +260,37 @@ class App(rapidsms.app.App):
                 try_again = trim_arguments()
                 continue
             
+            # Search for a shared intersection amongst all possible combinations
+            possible_intersections = []
+            
             for oneway in oneway_set:    
                 for otherway in otherway_set:
                     for one_intersection in oneway.intersections.all():
                         for other_intersection in otherway.intersections.all():
                             if one_intersection == other_intersection:
-                                return one_intersection.location
+                                # Careful not to add the same intersection twice
+                                if one_intersection.location not in possible_intersections:
+                                    possible_intersections.append(one_intersection.location)
+                                
+            if len(possible_intersections) == 1:
+                # Yay!
+                return possible_intersections[0]
+            else:
+                # Not enough information to get an exact match
+                return None
                         
             try_again = trim_arguments()
 
         # No possible intersection of these two roads
         return None
         
-    def _get_block(self, number, block):
+    def _get_block(self, number, args):
+        """
+        Try various combinations of name parameters in order to find a
+        block of the given number on the named road.
+        
+        TODO
+        """
         pass
         
     def _strip_punctuation(self, s):
