@@ -27,8 +27,8 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         if options['clear']:
             log.write('', 'info', 'Clearing all centerline data.')
-            # TigerSegment.objects.all().delete()
-            # TigerNode.objects.all().delete()
+            Intersection.objects.all().delete()
+            Block.objects.all().delete()
             Road.objects.all().delete()
         
         if options['test']:
@@ -176,9 +176,17 @@ class Command(NoArgsCommand):
         """
         Create an intersection for two Roads.
         """
-        intersection = Intersection.objects.create(
-            location=location
-            )
-            
-        intersection.roads.add(oneway)    
-        intersection.roads.add(otherway)
+        try:
+            intersection = Intersection.objects.get(location=location)
+        except Intersection.DoesNotExist:
+            intersection = Intersection.objects.create(
+                location=location
+                )
+        
+        intersection_roads = intersection.roads.all()
+        
+        if oneway not in intersection_roads:
+            intersection.roads.add(oneway)
+        
+        if otherway not in intersection_roads:    
+            intersection.roads.add(otherway)

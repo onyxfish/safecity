@@ -229,11 +229,11 @@ class App(rapidsms.app.App):
         if pattern == (TOKEN_ROAD_ARGS, TOKEN_ROAD_ARGS):
             oneway = args[0]
             otherway = args[1]
-            return self._get_intersection(oneway, otherway)
+            return self._get_intersection(oneway, otherway).location
         elif pattern == (TOKEN_ROAD_ARGS, TOKEN_AND, TOKEN_ROAD_ARGS):
             oneway = args[0]
             otherway = args[2]
-            return self._get_intersection(oneway, otherway)
+            return self._get_intersection(oneway, otherway).location
             
         return None
             
@@ -285,8 +285,8 @@ class App(rapidsms.app.App):
                         for other_intersection in otherway.intersections.all():
                             if one_intersection == other_intersection:
                                 # Careful not to add the same intersection twice
-                                if one_intersection.location not in possible_intersections:
-                                    possible_intersections.append(one_intersection.location)
+                                if one_intersection not in possible_intersections:
+                                    possible_intersections.append(one_intersection)
                                 
             if len(possible_intersections) == 1:
                 # Yay!
