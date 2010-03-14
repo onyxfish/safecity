@@ -21,7 +21,7 @@ class TestLocationParser(TestCase):
         
         self.QUINCY = Road.objects.get(full_name='W QUINCY ST')
         self.LOCKWOOD = Road.objects.get(full_name='S LOCKWOOD AVE')
-        self.QUINCY_AND_LOCKWOOD = Intersection.find_intersection(self.QUINCY, self.LOCKWOOD).location
+        self.QUINCY_AND_LOCKWOOD = Intersection.find_intersection(self.QUINCY, self.LOCKWOOD)
         self.FIFTY_THREE_HUNDRED_QUINCY = Block.objects.get(number=5300, road=self.QUINCY)
     
     # Missing data

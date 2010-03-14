@@ -15,4 +15,4 @@ class App (rapidsms.app.App):
         """
         message.respond('got it')
         
-        self.handled = True
+        return True

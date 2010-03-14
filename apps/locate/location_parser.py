@@ -213,11 +213,11 @@ class LocationParser(object):
         if pattern == (TOKEN_ROAD_ARGS, TOKEN_ROAD_ARGS):
             oneway = args[0]
             otherway = args[1]
-            return self._get_intersection(oneway, otherway).location
+            return self._get_intersection(oneway, otherway)
         elif pattern == (TOKEN_ROAD_ARGS, TOKEN_AND, TOKEN_ROAD_ARGS):
             oneway = args[0]
             otherway = args[2]
-            return self._get_intersection(oneway, otherway).location
+            return self._get_intersection(oneway, otherway)
         elif pattern == (TOKEN_BLOCK_NUMBER, TOKEN_ROAD_ARGS):
             block_number = args[0]
             road_args = args[1]

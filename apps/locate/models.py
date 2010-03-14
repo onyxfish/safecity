@@ -142,6 +142,9 @@ class Intersection(models.Model):
     
     objects = models.GeoManager()
     
+    def __unicode__(self):
+        return ' and '.join([road.full_name for road in self.roads.all()])
+    
     @classmethod
     def find_intersection(cls, oneway, otherway):
         """

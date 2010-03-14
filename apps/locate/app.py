@@ -31,5 +31,6 @@ class App(rapidsms.app.App):
         except RoadWithoutBlockException:
             pass
         
-        # TODO: temporary
-        message.respond(message.location.wkt)
+        # TODO: debug
+        message.respond(str(message.location))
+        return True
