@@ -19,7 +19,7 @@ class App(rapidsms.app.App):
         """
         with open('data/wordlists/en-basic') as f:
             print 'Loading dropwords'
-            DROP_WORDS = [word.lower() for word in f.readlines()]
+            self.DROP_WORDS = [word.lower() for word in f.readlines()]
     
     def parse(self, message):
         """
@@ -35,17 +35,22 @@ class App(rapidsms.app.App):
         TODO
         """
         words = text.split()
+        print self.DROP_WORDS
         words_to_check = [word for word in words if word not in self.DROP_WORDS]
+        print words_to_check
         
         roads = []
-        for word in words:
+        for i in range(0, len(words)):
+            word = words[i]
             w = self._strip_punctuation(word)
             
             if w.isdigit():
                 continue
+                
+            
             
             try:
-                roads.append(Road.objects.get(name__iexact=w))
+                roads.append(Road.objects.filter(name__iexact=w))
             except Road.DoesNotExist:
                 pass
         

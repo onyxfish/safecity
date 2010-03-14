@@ -1,5 +1,51 @@
 from django.contrib.gis.db import models
 
+ROAD_TYPES = {
+    ('HWY', 'Highway'),
+    ('WAY', 'Way'),
+    ('EXPY', 'Expressway'),
+    ('CT', 'Court'),
+    ('RL', 'RL'),       # Unknown abbrev. Only for "KENNEDY EXPRESS"
+    ('PL', 'Place'),
+    ('DR', 'Drive'),
+    ('BLVD', 'Boulevard'),
+    ('CRES', 'Crescent'),
+    ('LN', 'Lane'),
+    ('ROW', 'Row'),
+    ('ST', 'Street'),
+    ('TOLL', 'Tollway'),
+    ('ER', 'Entrance Ramp'),
+    ('TER', 'Terrace'),
+    ('PLZ', 'Plaza'),
+    ('RD', 'Road'),
+    ('XR', 'Exit Ramp'),
+    ('AVE', 'Avenue'),
+    ('SQ', 'Square'),
+    ('PKWY', 'Parkway'),
+    ('SR', 'SR'),       # Unknown abbrev. e.g. "LAKE SHORE" and "KENNEDY EXPRESS"
+}
+
+ROAD_PREFIX_DIRECTIONS = {
+    ('N', 'North'),
+    ('S', 'South'),
+    ('E', 'East'),
+    ('W', 'West'),
+}
+
+ROAD_SUFFIX_DIRECTIONS = {
+    ('OP', 'Overpass'),
+    ('S', 'South'),
+    ('W', 'West'),
+    ('EB', 'Eastbound'),
+    ('WB', 'Westbound'),
+    ('N', 'North'),
+    ('OB', 'Outbound'),
+    ('NB', 'Northbound'),
+    ('SB', 'Southbound'),
+    ('IB', 'Inbound'),
+    ('E', 'East'),
+}
+
 class Road(models.Model):
     """
     A unique named street in the city.
@@ -12,6 +58,7 @@ class Road(models.Model):
     
     prefix_direction = models.CharField(
         max_length=2,
+        choices=ROAD_PREFIX_DIRECTIONS,
         help_text='Direction this road runs.')
     
     name = models.CharField(
@@ -20,10 +67,12 @@ class Road(models.Model):
 
     road_type = models.CharField(
         max_length=4,
+        choices=ROAD_TYPES,
         help_text='The road type, e.g. Ave.')
 
     suffix_direction = models.CharField(
         max_length=2,
+        choices=ROAD_SUFFIX_DIRECTIONS,
         help_text='Direction this road runs.')
         
     def __unicode__(self):
