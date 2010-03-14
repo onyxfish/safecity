@@ -46,6 +46,11 @@ ROAD_SUFFIX_DIRECTIONS = [
     ('E', 'East'),
 ]
 
+ALIAS_TYPES = [
+    ('MS', 'Misspelling'),
+    ('HN', 'Honorary Name'),
+]
+
 class Road(models.Model):
     """
     A unique named street in the city.
@@ -63,6 +68,7 @@ class Road(models.Model):
     
     name = models.CharField(
         max_length=64,
+        db_index=True,
         help_text='The road name.')
 
     road_type = models.CharField(
@@ -119,15 +125,31 @@ class RoadAlias(models.Model):
         
     road = models.ForeignKey('Road')
 
+    alias_type = models.CharField(
+        max_length=2,
+        choices=ALIAS_TYPES,
+        help_text='The type of alias this is, e.g. Misspelling or Honorary Name')
+
 class Intersection(models.Model):
     """
-    A place where two Roads intersect.
+    A place where two or more Roads intersect.
     """
-    roads = models.ManyToManyField('Road', related_name='intersections')
+    roads = models.ManyToManyField(
+        'Road',
+        related_name='intersections')
     
     location = models.PointField()
     
     objects = models.GeoManager()
+    
+    @classmethod
+    def find_intersection(cls, oneway, otherway):
+        """
+        Lookup the intersection of two roads.
+        """
+        for i in oneway.intersections.all():
+            if otherway in i.roads.all():
+                return i
 
 class Block(models.Model):
     """
@@ -137,14 +159,16 @@ class Block(models.Model):
         help_text='Start address number for this block, e.g. 1600.'
         )
         
-    road = models.ForeignKey('Road')
+    road = models.ForeignKey(
+        'Road',
+        help_text='The road this block is a part of.')
     
     location = models.PointField()
     
     objects = models.GeoManager()
     
     def __unicode__(self):
-        return ' '.join([str(self.number), self.road])
+        return ' '.join([str(self.number), self.road.full_name])
 
 class Landmark(models.Model):
     """
