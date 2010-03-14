@@ -17,8 +17,8 @@ TOKEN_NUMBER = '<NUMBER>'
 TOKEN_AND = '<AND>'
 TOKEN_BETWEEN = '<BETWEEN>'
 
-TOKEN_ROAD_ID = '<ROAD_ID>'
-TOKEN_BLOCK_ID = '<BLOCK_ID>'
+TOKEN_ROAD_ARGS = '<ROAD_ARGS>'
+TOKEN_BLOCK_NUMBER = '<BLOCK_NUMBER>'
  
 class App(rapidsms.app.App):
     """
@@ -69,16 +69,12 @@ class App(rapidsms.app.App):
         """
         words = self._get_words_from_text(text)
         word_tokens = self._tokenize_words(words)
-        word_tokens = self._substitute_roads(word_tokens)
+        location_tokens = self._substitute_road_args(word_tokens)
+        location = self._determine_location(location_tokens)
         
-        print word_tokens
+        print location
         
-        # if len(roads) == 2:
-        #     for i in roads[0].intersections.all():
-        #         if roads[1] in i.roads.all():
-        #             return i.location
-        
-        return None
+        return location
         
     def _get_words_from_text(self, text):
         """
@@ -108,7 +104,7 @@ class App(rapidsms.app.App):
         # Scan for road types
         for i in range(0, word_count):
             if words[i] in self.ROAD_TYPES.keys():
-                word_tokens[i] = TOKEN_ROAD_TYPEs
+                word_tokens[i] = TOKEN_ROAD_TYPE
 
         # Scan for any obvious skip words
         for i in range(0, word_count):
@@ -137,17 +133,17 @@ class App(rapidsms.app.App):
                 
         return zip(words, word_tokens)
         
-    def _substitute_roads(self, word_tokens):
+    def _substitute_road_args(self, word_tokens):
         """
         Takes a zip of words and tokens and generates a new zip containing
-        only location specific tokens (TOKEN_ROAD_ID, TOKEN_BLOCK_ID, TOKEN_AND)
+        only location specific tokens (TOKEN_ROAD_ARGS, TOKEN_AND, etc.)
         """
         word_count = len(word_tokens)
         new_tokens = []
         
         for i in range(0, word_count):
             word, token = word_tokens[i]
-            
+        
             if token == TOKEN_AND:
                 new_tokens.append((word, TOKEN_AND))
                 continue
@@ -156,100 +152,125 @@ class App(rapidsms.app.App):
                 continue
             elif token != TOKEN_ROAD:
                 continue
-                
+            
             road_prefix_direction = None
             road_name = word
             road_type = None
             road_suffix_direction = None
             block_number = None
-            
+        
             if i > 0:
                 word, token = word_tokens[i - 1]
-                
+            
                 if token == TOKEN_DIRECTION:
                     road_prefix_direction = word
-                    
+                
                     if i - 1 > 0:
                         word, token = word_tokens[i - 2]
-                        
+                    
                         if token == TOKEN_NUMBER:
+                            # TODO - floor
                             block_number = word
                 elif token == TOKEN_NUMBER:
+                    # TODO - floor
                     block_number = word
-                    
+                
             if i + 1 < word_count:
                 word, token = word_tokens[i + 1]
-                
+            
                 if token == TOKEN_ROAD_TYPE:
                     road_type = word
-                    
+                
                     if i + 2 < word_count:
                         word, token = word_tokens[i + 2]
-                        
+                    
                         if token == TOKEN_DIRECTION:
                             road_suffix_direction = word
                 elif token == TOKEN_DIRECTION:
                     road_suffix_direction = word
+        
+            args = {'name': road_name}
+            if road_prefix_direction: args['prefix_direction'] = road_prefix_direction
+            if road_type: args['road_type'] = road_type
+            if road_suffix_direction: args['suffix_direction'] = road_suffix_direction
             
-            road = self._get_road(
-                road_prefix_direction, road_name, road_type, road_suffix_direction)
+            if block_number:
+                new_tokens.append((block_number, TOKEN_BLOCK_NUMBER))
             
-            block = None
-            
-            # if road:
-            #     block = self._get_block(block_number, road)
-                
-            if block:
-                new_tokens.append((block, TOKEN_BLOCK_ID))
-                
-            if road:
-                new_tokens.append((road, TOKEN_ROAD_ID))
+            new_tokens.append((args, TOKEN_ROAD_ARGS))
                 
         return new_tokens
+        
+    def _determine_location(self, location_tokens):
+        """
+        Takes a fully-substituted string and attempts to determine an exact
+        location.
+        """
+        args, pattern = zip(*location_tokens)
+        
+        print args
+        print pattern
+        
+        if pattern == (TOKEN_ROAD_ARGS, TOKEN_ROAD_ARGS):
+            oneway = args[0]
+            otherway = args[1]
+            return self._get_intersection(oneway, otherway)
+        elif pattern == (TOKEN_ROAD_ARGS, TOKEN_AND, TOKEN_ROAD_ARGS):
+            oneway = args[0]
+            otherway = args[2]
+            return self._get_intersection(oneway, otherway)
             
-    def _get_road(self, prefix_direction, name, road_type, suffix_direction, must_intersect=None):
+        return None
+            
+    def _get_intersection(self, oneway_args, otherway_args):
         """
         Tries various combination of name parameters in order to try to find
-        a unique road.
-        
-        TODO: support must_intersect argument
+        a an intersection amongst the named roads
         """
-        args = {'name': name}
-        if prefix_direction: args['prefix_direction'] = prefix_direction
-        if road_type: args['road_type'] = road_type
-        if suffix_direction: args['suffix_direction'] = suffix_direction
-        
         try_again = True
+        
         while try_again:
             try_again = False
             
-            print args
+            print oneway_args, otherway_args
             
-            try:
-                return Road.objects.get(**args)
-            except Road.MultipleObjectsReturned:
-                if must_intersect:
-                    # TODO
-                    pass
+            oneway_set = Road.objects.filter(**oneway_args)
+            otherway_set = Road.objects.filter(**otherway_args)
+            
+            def trim_arguments():
+                # First try trimming suffix directions
+                if 'suffix_direction' in oneway_args or 'suffix_direction' in otherway_args:
+                    del oneway_args['suffix_direction']
+                    del otherway_args['suffix_direction']
+                    return True
+                # Then try trimming prefix directions
+                elif 'prefix_direction' in oneway_args or 'prefix_direction' in otherway_args:
+                    del oneway_args['prefix_direction']
+                    del otherway_args['prefix_direction']
+                    return True
+                # Lastly try trimming street types
+                elif 'road_type' in oneway_args or 'road_type' in otherway_args:
+                    del oneway_args['road_type']
+                    del otherway_args['road_type']
+                    return True
                 else:
-                    return None
-            except Road.DoesNotExist:
-                if 'suffix_direction' in args:
-                    del args['suffix_direction']
-                    try_again = True
-                    continue
-                elif 'prefix_direction' in args:
-                    del args['prefix_direction']
-                    try_again = True
-                    continue
-                elif 'road_type' in args:
-                    del args['road_type']
-                    try_again = True
-                    continue
-                else:
-                    # Should not be possible...
-                    raise
+                    # Nothing left to try...
+                    return False
+            
+            if not oneway_set or not otherway_set:
+                try_again = trim_arguments()
+                continue
+            
+            for oneway in oneway_set:    
+                for otherway in otherway_set:
+                    for one_intersection in oneway.intersections.all():
+                        for other_intersection in otherway.intersections.all():
+                            if one_intersection == other_intersection:
+                                return one_intersection.location
+                        
+            try_again = trim_arguments()
 
+        # No possible intersection of these two roads
         return None
         
     def _get_block(self, number, block):
