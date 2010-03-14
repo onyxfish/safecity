@@ -10,16 +10,21 @@ class App(rapidsms.app.App):
     message and annotates the message object with that information.
     """
     DROP_WORDS = []
+    ROAD_TYPES = {}
     
     def start(self):
         """
         Import English drop-words from file.
-        
-        TODO: verify these are loaded only once
         """
         with open('data/wordlists/en-basic') as f:
             print 'Loading dropwords'
             self.DROP_WORDS = [word.lower() for word in f.readlines()]
+        
+        with open('data/streets/road_types.csv') as f:
+            print 'Loading road types'
+            for line in f.readlines():
+                k, v = line.split(',')
+                self.ROAD_TYPES[k] = v
     
     def parse(self, message):
         """

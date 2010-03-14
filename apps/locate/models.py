@@ -1,38 +1,38 @@
 from django.contrib.gis.db import models
 
-ROAD_TYPES = {
-    ('HWY', 'Highway'),
-    ('WAY', 'Way'),
-    ('EXPY', 'Expressway'),
-    ('CT', 'Court'),
-    ('RL', 'RL'),       # Unknown abbrev. Only for "KENNEDY EXPRESS"
-    ('PL', 'Place'),
-    ('DR', 'Drive'),
+ROAD_TYPES = [
+    ('AVE', 'Avenue'),
     ('BLVD', 'Boulevard'),
     ('CRES', 'Crescent'),
-    ('LN', 'Lane'),
-    ('ROW', 'Row'),
-    ('ST', 'Street'),
-    ('TOLL', 'Tollway'),
+    ('CT', 'Court'),
+    ('DR', 'Drive'),
     ('ER', 'Entrance Ramp'),
-    ('TER', 'Terrace'),
-    ('PLZ', 'Plaza'),
-    ('RD', 'Road'),
-    ('XR', 'Exit Ramp'),
-    ('AVE', 'Avenue'),
-    ('SQ', 'Square'),
+    ('EXPY', 'Expressway'),
+    ('LN', 'Lane'),
+    ('HWY', 'Highway'),
     ('PKWY', 'Parkway'),
+    ('PL', 'Place'),
+    ('PLZ', 'Plaza'),
+    ('RL', 'RL'),       # Unknown abbrev. Only for "KENNEDY EXPRESS"
+    ('RD', 'Road'),
+    ('ROW', 'Row'),
+    ('SQ', 'Square'),
     ('SR', 'SR'),       # Unknown abbrev. e.g. "LAKE SHORE" and "KENNEDY EXPRESS"
-}
+    ('ST', 'Street'),
+    ('TER', 'Terrace'),
+    ('TOLL', 'Tollway'),
+    ('WAY', 'Way'),
+    ('XR', 'Exit Ramp'),
+]
 
-ROAD_PREFIX_DIRECTIONS = {
+ROAD_PREFIX_DIRECTIONS = [
     ('N', 'North'),
     ('S', 'South'),
     ('E', 'East'),
     ('W', 'West'),
-}
+]
 
-ROAD_SUFFIX_DIRECTIONS = {
+ROAD_SUFFIX_DIRECTIONS = [
     ('OP', 'Overpass'),
     ('S', 'South'),
     ('W', 'West'),
@@ -44,7 +44,7 @@ ROAD_SUFFIX_DIRECTIONS = {
     ('SB', 'Southbound'),
     ('IB', 'Inbound'),
     ('E', 'East'),
-}
+]
 
 class Road(models.Model):
     """
