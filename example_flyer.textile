@@ -1,0 +1,34 @@
+h1=. SAFECITY
+
+h2=. Text 55555
+
+h3=. Completely Anonymous
+
+p. *To get text messages warning you of danger*
+Text *{background-color:lightgray;font-family:monospace;font-size:12px}on* and your location
+Example: *{background-color:lightgray;font-family:monospace;font-size:12px}on austin and lake*
+Example: *{background-color:lightgray;font-family:monospace;font-size:12px}on 100 n austin*
+
+To stop getting messages text *{background-color:lightgray;font-family:monospace;font-size:12px}off*
+
+p. *To warn others of danger*
+Text where you are and what you see
+Example: *{background-color:lightgray;font-family:monospace;font-size:12px}i saw a man with a gun at austin and lake*
+Example: *{background-color:lightgray;font-family:monospace;font-size:12px}a lady got her purse stolen at 100 n austin*
+
+h3. Need help?
+
+p. *Hungry?*
+For shelters text *{background-color:lightgray;font-family:monospace;font-size:12px}1* and your location
+
+p. *Abused?*
+For a safe place text *{background-color:lightgray;font-family:monospace;font-size:12px}2* and your location
+
+p. *Violence?*
+To get a call from a mediator text *{background-color:lightgray;font-family:monospace;font-size:12px}3* and your location
+
+h3=. Completely Anonymous
+
+h2=. Text 55555
+
+h1=. SAFECITY

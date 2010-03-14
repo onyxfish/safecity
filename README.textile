@@ -1,0 +1,15 @@
+h1. Safecity
+
+h2. About
+
+Safecity is a project to provide low-income neighborhoods in American cities the tools to protect themselves against crime, specifically gang violence.  By leveraging the power of text messaging, Safecity provides a way for citizens to report and receive information about dangerous behavior in their neighborhoods through a share-and-share-alike model.  Messages are rebroadcast within very limited geographic areas and only to those who have requested them.  All content that passes through the network is aggressively anonymized.
+
+h2. Genesis
+
+Safecity is inspired by "Ushahidi":http://www.ushahidi.com and built with "RapidSMS":http://www.rapidsms.org/, a project of "UNICEF":http://www.unicef.org/. These two projects have been used to great affect to combat the logistical problems of managing safety and resources in crisis zones and in the developing world.  The motivation behind adapting these principles to areas of the United States is simple: gang violence *is* a crisis.  There is no other adequate way to describe the problems which the residents of low-income, inner-city neighborhoods face on a daily basis.  Safecity is an attempt to provide these people with the tools to protect themselves.
+
+h2. Objectives
+
+First and foremost Safecity's objective is to provide tools for receiving messages via SMS, parsing location information from them, and then rebroadcasting those messages to recipients who have registered to receive them.
+
+Secondly, using the same SMS infrastructure, Safecity will provide a platform for the distribution of social services in poverty-stricken areas.  For example, a woman in a domestic violence situation will be able to type a number followed by her approximate location and receive back the locations of shelters nearest to her.  The same system can be used to find food banks or to request a conflict mediator.
