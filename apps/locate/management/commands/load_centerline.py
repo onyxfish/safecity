@@ -151,10 +151,7 @@ class Command(NoArgsCommand):
         if to_addr < from_addr:
             raise Exception('Unexpected data: to_addr < from_addr')
 
-        def floor_to_hundreds(x):
-             return (x / 100) * 100
-
-        return floor_to_hundreds(from_addr)
+        return Block.to_block_number(from_addr)
         
     def estimate_point_along_linestring(self, linestring, percent):
         """

@@ -171,11 +171,9 @@ class LocationParser(object):
                         word, token = word_tokens[i - 2]
                     
                         if token == TOKEN_NUMBER:
-                            # TODO - floor
-                            block_number = word
+                            block_number = Block.to_block_number(int(word))
                 elif token == TOKEN_NUMBER:
-                    # TODO - floor
-                    block_number = word
+                    block_number = Block.to_block_number(int(word))
                 
             if i + 1 < word_count:
                 word, token = word_tokens[i + 1]
@@ -220,6 +218,10 @@ class LocationParser(object):
             oneway = args[0]
             otherway = args[2]
             return self._get_intersection(oneway, otherway).location
+        elif pattern == (TOKEN_BLOCK_NUMBER, TOKEN_ROAD_ARGS):
+            block_number = args[0]
+            road_args = args[1]
+            return self._get_block(block_number, road_args)
         elif pattern == (TOKEN_ROAD_ARGS,):
             raise RoadWithoutBlockException()
             
@@ -234,8 +236,6 @@ class LocationParser(object):
         
         while try_again:
             try_again = False
-            
-            print oneway_args, otherway_args
             
             oneway_set = Road.objects.filter(**oneway_args)
             otherway_set = Road.objects.filter(**otherway_args)
@@ -279,7 +279,7 @@ class LocationParser(object):
             if len(possible_intersections) == 1:
                 # Yay!
                 return possible_intersections[0]
-            else:
+            elif len(possible_intersections) > 1:
                 # Not enough information to get an exact match
                 raise MultiplePossibleLocationsException()
                         
@@ -288,14 +288,59 @@ class LocationParser(object):
         # No possible intersection of these two roads
         return None
         
-    def _get_block(self, number, args):
+    def _get_block(self, number, road_args):
         """
         Try various combinations of name parameters in order to find a
         block of the given number on the named road.
-        
-        TODO
         """
-        pass
+        try_again = True
+        
+        while try_again:
+            try_again = False
+            
+            road_set = Road.objects.filter(**road_args)
+            
+            def trim_arguments():
+                # First try trimming suffix directions
+                if 'suffix_direction' in road_args:
+                    del road_args['suffix_direction']
+                    return True
+                # Then try trimming prefix directions
+                elif 'prefix_direction' in road_args:
+                    del road_args['prefix_direction']
+                    return True
+                # Lastly try trimming street types
+                elif 'road_type' in road_args:
+                    del road_args['road_type']
+                    return True
+                else:
+                    # Nothing left to try...
+                    return False
+            
+            if not road_set:
+                try_again = trim_arguments()
+                continue
+            
+            # Search for block with this number amongst the possibilities
+            possible_blocks = []
+            
+            for road in road_set:
+                try:
+                    possible_blocks.append(Block.objects.get(number=number, road=road))
+                except Block.DoesNotExist:
+                    continue
+                                
+            if len(possible_blocks) == 1:
+                # Yay!
+                return possible_blocks[0]
+            elif len(possible_blocks) > 1:
+                # Not enough information to get an exact match
+                raise MultiplePossibleLocationsException()
+                        
+            try_again = trim_arguments()
+
+        # No block of this number on a road of this name
+        return None
         
     def _strip_punctuation(self, s):
         # All of string.punctuation except ampersand

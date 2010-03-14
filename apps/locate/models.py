@@ -169,6 +169,10 @@ class Block(models.Model):
     
     def __unicode__(self):
         return ' '.join([str(self.number), self.road.full_name])
+    
+    @classmethod
+    def to_block_number(cls, x):
+        return (x / 100) * 100
 
 class Landmark(models.Model):
     """
