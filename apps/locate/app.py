@@ -19,6 +19,9 @@ TOKEN_BETWEEN = '<BETWEEN>'
 
 TOKEN_ROAD_ARGS = '<ROAD_ARGS>'
 TOKEN_BLOCK_NUMBER = '<BLOCK_NUMBER>'
+
+class MultiplePossibleLocationsException(Exception):
+    pass
  
 class App(rapidsms.app.App):
     """
@@ -66,13 +69,26 @@ class App(rapidsms.app.App):
     def _extract_location(self, text):
         """
         Extract a location from a text string.
+        
+        This is a four stage process:
+        1) Extract words from the text.
+        2) Tokenize the words, identifying road names, etc.
+        3) Extract location arguments from tokens.
+        4) Attempt to pinpoint an exact location using extracted arguments.
         """
         words = self._get_words_from_text(text)
         word_tokens = self._tokenize_words(words)
         location_tokens = self._substitute_road_args(word_tokens)
-        location = self._determine_location(location_tokens)
         
-        print location
+        if not location_tokens:
+            # TODO
+            return None
+        
+        try:
+            location = self._determine_location(location_tokens)
+        except MultiplePossibleLocationsException:
+            # TODO
+            return None
         
         return location
         
@@ -277,7 +293,7 @@ class App(rapidsms.app.App):
                 return possible_intersections[0]
             else:
                 # Not enough information to get an exact match
-                return None
+                raise MultiplePossibleLocationsException()
                         
             try_again = trim_arguments()
 
