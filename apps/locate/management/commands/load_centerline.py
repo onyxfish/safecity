@@ -6,7 +6,9 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import Point
+
 from django.core.management.base import NoArgsCommand, CommandError
 from django.db import connection, transaction
 
@@ -46,7 +48,11 @@ class Command(NoArgsCommand):
             road_suffix_direction = feature.get('SUF_DIR')
             from_cross_road = feature.get('F_CROSS')
             to_cross_road = feature.get('T_CROSS')
-            linestring = feature.geom
+            
+            try:
+                linestring = feature.geom
+            except OGRException:
+                continue
             
             # The vast majority of these unnammed roads are at O'Hare.
             # If they don't have names then people can't refer to them anyway
@@ -62,15 +68,19 @@ class Command(NoArgsCommand):
             self.create_block_for_feature(feature, road)
         
             # Create roads from intersecting features
-            f_road = self.get_road_for_intersection(from_cross_road)
-            if f_road:
-                location = Point(linestring.coords[0])
-                self.create_intersection(road, f_road, location)
+            if from_cross_road:
+                f_road = self.get_road_for_intersection(from_cross_road)
                 
-            t_road = self.get_road_for_intersection(to_cross_road)
-            if t_road:
-                location = Point(linestring.coords[-1])
-                self.create_intersection(road, t_road, location)
+                if f_road:
+                    location = Point(linestring.coords[0])
+                    self.create_intersection(road, f_road, location)
+            
+            if to_cross_road:
+                t_road = self.get_road_for_intersection(to_cross_road)
+                
+                if t_road:
+                    location = Point(linestring.coords[-1])
+                    self.create_intersection(road, t_road, location)
         
     def get_or_create_road(self, road_prefix_direction, road_name, road_type, road_suffix_direction):
         """
@@ -96,8 +106,10 @@ class Command(NoArgsCommand):
         Creates a road from the centerline F_CROSS or T_CROSS strings,
         if those strings indicate an intersection w/ another road.
         """
-        bits = cross.split('|')[1:] # Trim address #
-        if bits[1]:
+        bits = cross.split('|')[1:] # Trim address number
+        bits = [bit.strip() for bit in bits] # Cleanup whitespace
+        
+        if bits[1].strip():
             road = self.get_or_create_road(*bits)
         else:
             # Road connects to another block of the same road w/o intersection
@@ -114,7 +126,11 @@ class Command(NoArgsCommand):
         to_addr_left = feature.get('L_T_ADD')
         from_addr_right = feature.get('R_F_ADD')
         to_addr_right = feature.get('R_T_ADD')
-        linestring = feature.geom
+        
+        try:
+            linestring = feature.geom
+        except OGRException:
+            return
         
         block_number = self.get_block_number(
             from_addr_left, to_addr_left, from_addr_right, to_addr_right)
