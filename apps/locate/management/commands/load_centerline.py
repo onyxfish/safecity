@@ -7,7 +7,7 @@ import os
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.gdal.error import OGRException
-from django.contrib.gis.geos import GEOSGeometry, Point
+from django.contrib.gis.geos import fromstr, Point
 
 from django.core.management.base import NoArgsCommand, CommandError
 from django.db import connection, transaction
@@ -136,7 +136,7 @@ class Command(NoArgsCommand):
             from_addr_left, to_addr_left, from_addr_right, to_addr_right)
             
         # Get center-point of block
-        location = GEOSGeometry(self.estimate_point_along_linestring(linestring, 0.50), srid=9102671)
+        location = fromstr(self.estimate_point_along_linestring(linestring, 0.50), srid=9102671)
         
         try:
             Block.objects.get(
