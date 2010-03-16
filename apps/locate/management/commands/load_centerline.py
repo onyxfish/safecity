@@ -72,14 +72,14 @@ class Command(NoArgsCommand):
                 f_road = self.get_road_for_intersection(from_cross_road)
                 
                 if f_road:
-                    location = Point(linestring.coords[0])
+                    location = Point(linestring.coords[0], srid=9102671)
                     self.create_intersection(road, f_road, location)
             
             if to_cross_road:
                 t_road = self.get_road_for_intersection(to_cross_road)
                 
                 if t_road:
-                    location = Point(linestring.coords[-1])
+                    location = Point(linestring.coords[-1], srid=9102671)
                     self.create_intersection(road, t_road, location)
         
     def get_or_create_road(self, road_prefix_direction, road_name, road_type, road_suffix_direction):
