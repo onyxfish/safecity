@@ -13,3 +13,12 @@ h2. Objectives
 First and foremost Safecity's objective is to provide tools for receiving messages via SMS, parsing location information from them, and then rebroadcasting those messages to recipients who have registered to receive them.
 
 Secondly, using the same SMS infrastructure, Safecity will provide a platform for the distribution of social services in poverty-stricken areas.  For example, a woman in a domestic violence situation will be able to type a number followed by her approximate location and receive back the locations of shelters nearest to her.  The same system can be used to find food banks or to request a conflict mediator.
+
+h2. Privacy
+
+Due to the sensitive nature of the information handled by this project extreme care is taken to protect the privacy of its users.  The explicit standard of SafeCity is that the identity of its users should will never be available to a third-party, even if the contents of the database are subpoenaed.  This is accomplished in a number of ways, most importantly:
+
+* Only phone numbers are ever collected--no names, ages, or other identifying information.
+* Only approximate addresses are ever recorded. It is literally impossible for the system to ever record a location based on exact address.
+* Phone numbers of reporters are anonymized as soon as they can be processed for SPAM, abuse, etc. and before the contents of their reports are made available online or in any other manner.
+* Users who unregister from the system are deleted--no record is kept that they were ever registered with the system.

@@ -20,7 +20,6 @@ class App(rapidsms.app.App):
         Log outgoing messages
         """
         msg = OutgoingMessage.objects.create(
-            recipient=message.connection.identity,
             text=message.text, 
             backend=message.connection.backend.slug)
                                              

@@ -5,7 +5,7 @@ class MessageBase(models.Model):
     """
     Base model for message logging.
     """
-    text = models.CharField(max_length=140)
+    text = models.CharField(max_length=160)
     backend = models.CharField(max_length=150)
     
     class Meta:
@@ -15,7 +15,7 @@ class IncomingMessage(MessageBase):
     """
     An incoming message before any processing.
     """
-    sender = models.CharField(max_length=150)
+    sender = models.CharField(max_length=10)
     received = models.DateTimeField(auto_now_add=True)
     
     @property
@@ -30,18 +30,17 @@ class IncomingMessage(MessageBase):
         return True
     
     def __unicode__(self):
-        return "In from %s: %s" % (self.sender, self.text)  
+        return "In from %s: %s" % (self.sender, self.text)
 
 class OutgoingMessage(MessageBase):
     """
     An outgoing message from the system.
     """
-    recipient = models.CharField(max_length=150)
     sent = models.DateTimeField(auto_now_add=True)
     
     @property
     def identity(self):
-        return self.recipient
+        return 'Anonymous'
     
     @property
     def datetime(self):

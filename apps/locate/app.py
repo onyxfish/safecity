@@ -29,6 +29,7 @@ class App(rapidsms.app.App):
             # TODO
             pass
         except RoadWithoutBlockException:
+            # TODO
             pass
         
         # TODO: debug
