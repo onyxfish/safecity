@@ -116,7 +116,8 @@ class Command(NoArgsCommand):
         bits = cross.split('|')[1:] # Trim address number
         bits = [bit.strip() for bit in bits] # Cleanup whitespace
         
-        if bits[1].strip():
+        road_name = bits[1].strip()
+        if road_name and road_name != 'DEAD END':
             road = self.get_or_create_road(*bits)
         else:
             # Road connects to another block of the same road w/o intersection
