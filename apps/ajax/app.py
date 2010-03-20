@@ -11,6 +11,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from django.utils.simplejson import JSONEncoder
 from django.db.models.query import QuerySet
 
+from apps.priorities import PRIORITIES
 
 class App(rapidsms.app.App):
     """This App does nothing by itself. It exists only to serve other Apps, by
@@ -40,6 +41,7 @@ class App(rapidsms.app.App):
        all requests to /ajax/(.+) to the right place, on the server side. I cannot
        conceive of a situation where this would be a problem - but keep it in mind,
        and don't forget to prepend "/ajax/" to your AJAX URLs."""
+    PRIORITY = PRIORITIES['ajax']
     
     
     class Server(ThreadingMixIn, HTTPServer):

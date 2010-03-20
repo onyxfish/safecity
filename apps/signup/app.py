@@ -2,12 +2,15 @@ from datetime import datetime
 
 import rapidsms
 
-from apps.signup.models import Citizen
+from apps.signup.models import Resident
+from apps.priorities import PRIORITIES
 
 class App (rapidsms.app.App):
     """
     Handle registering, deregistering, and updating info for alert recipients.
     """
+    PRIORITY = PRIORITIES['signup']
+    
     def start(self):
         self.PROCESSORS = {
             'on': self.on,
@@ -38,18 +41,22 @@ class App (rapidsms.app.App):
         """
         Register or update user.
         """
-        if not hasattr('location', message) or message.location is None:
-            # TODO
-            message.respond('Please include your location in your message.')
+        if not hasattr(message, 'location') or message.location is None:
+            # TODO - wording, helpful example
+            message.respond('We could not find you. Please type your location in your message.')
+            return
             
         try:
             resident = Resident.objects.get(phone_number=message.connection.identity)
-            resident.location = message.location
+            resident.location = message.location.location
             resident.save()
         except Resident.DoesNotExist:
             resident = Resident.objects.create(
                 phone_number=message.connection.identity,
-                location=message.location)
+                location=message.location.location)
+        
+        # TODO - wording
+        message.respond('You will now get messages for your area.')
         
     def off(self, message):
         """
@@ -60,8 +67,10 @@ class App (rapidsms.app.App):
         try:
             resident = Resident.objects.get(phone_number=message.connection.identity)
         except Resident.DoesNotExist:
-            # TODO
+            # TODO - wording
             message.respond('The phone number you are texting from is not in our system.')
             return
         
         resident.delete()
+        
+        message.respond('You have been removed from our system and will no longer get messages.')

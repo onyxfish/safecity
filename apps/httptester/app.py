@@ -4,7 +4,10 @@
 import rapidsms
 import datetime
 
+from apps.priorities import PRIORITIES
+
 class App(rapidsms.app.App):
+    PRIORITY = PRIORITIES['httptester']
 
     def configure (self, title="Message Tester", tab_link="/http", host="localhost", port=8080):
         # overridden by App and Backend subclasses

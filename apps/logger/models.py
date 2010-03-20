@@ -50,4 +50,4 @@ class OutgoingMessage(MessageBase):
         return False
     
     def __unicode__(self):
-        return "Out to %s: %s" % (self.recipient, self.text)
+        return "Out: %s" % (self.text)

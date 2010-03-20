@@ -4,12 +4,15 @@
 import rapidsms
 import urllib2
 
+from apps.priorities import PRIORITIES
+
 class App(rapidsms.app.App):
     """When the message "webui" is received, attempts to fetch
        the PING_URL via urllib2, and responds to indicate whether
        it was successful. The view doesn't really verify much right
        now, but this is rather useful for checking if everything is
        running, without internet access on either end."""
+    PRIORITY = PRIORITIES['webapp']
 
     MSG_OK           = "WIN: The RapidSMS WebUI is alive and well."
     MSG_NOT_RUNNING  = "FAIL: Couldn't connect to the RapidSMS WebUI."

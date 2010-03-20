@@ -3,12 +3,15 @@ import string
 import rapidsms
 
 from apps.locate.location_parser import *
+from apps.priorities import PRIORITIES
  
 class App(rapidsms.app.App):
     """
     This application attempts to exctract location information from the
     message and annotates the message object with that information.
     """
+    PRIORITY = PRIORITIES['locate']
+    
     def start(self):
         """
         Import English drop-words from file.
@@ -33,4 +36,5 @@ class App(rapidsms.app.App):
             pass
         
         # TODO: debug
-        message.respond(str(message.location))
+        if hasattr(message, 'location'):
+            message.respond(str(message.location))
