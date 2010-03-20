@@ -33,4 +33,3 @@ class App(rapidsms.app.App):
         
         # TODO: debug
         message.respond(str(message.location))
-        return True

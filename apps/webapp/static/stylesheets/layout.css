@@ -292,12 +292,6 @@ div.trigger {
 	}
 
 
-/* Used to shrink i18n change-language button */
-input.small {
-	width: 5em; 
-}
-
-
 /* legal junk */
 #footer {
 	border-top: 1px dotted #eee;
