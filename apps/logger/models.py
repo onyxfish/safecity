@@ -1,50 +1,54 @@
-#!/usr/bin/env python
-# vim: ai ts=4 sts=4 et sw=4
-
 import django
 from django.db import models
 
-
 class MessageBase(models.Model):
+    """
+    Base model for message logging.
+    """
     text = models.CharField(max_length=140)
-    # TODO save connection title rather than wacky object string?
-    identity = models.CharField(max_length=150)
     backend = models.CharField(max_length=150)
-    
-    def __unicode__(self):
-        return "%s (%s) %s" % (self.identity, self.backend, self.text)
     
     class Meta:
         abstract = True
     
-    
 class IncomingMessage(MessageBase):
+    """
+    An incoming message before any processing.
+    """
+    sender = models.CharField(max_length=150)
     received = models.DateTimeField(auto_now_add=True)
     
-    # Helper methods to allow this object to be treated similar
-    # to the outgoing message, e.g. if they are in the same list
-    # in a template
     @property
-    def date(self):
-        '''Same as received''' 
+    def identity(self):
+        return self.sender
+    
+    @property
+    def datetime(self):
         return self.received
     
     def is_incoming(self):
         return True
     
     def __unicode__(self):
-        return "%s %s" % (MessageBase.__unicode__(self), self.received)  
+        return "In from %s: %s" % (self.sender, self.text)  
 
 class OutgoingMessage(MessageBase):
+    """
+    An outgoing message from the system.
+    """
+    recipient = models.CharField(max_length=150)
     sent = models.DateTimeField(auto_now_add=True)
     
     @property
-    def date(self):
-        '''Same as sent''' 
+    def identity(self):
+        return self.recipient
+    
+    @property
+    def datetime(self):
         return self.sent
     
     def is_incoming(self):
         return False
     
     def __unicode__(self):
-        return "%s %s" % (MessageBase.__unicode__(self), self.sent)  
+        return "Out to %s: %s" % (self.recipient, self.text)

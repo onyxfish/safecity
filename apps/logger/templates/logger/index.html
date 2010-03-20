@@ -15,14 +15,11 @@
     <tbody>
         {% for message in messages %}
             <tr>
-                <td>{{message.date|date:"d-M-Y H:m:s"}}</td>
+                <td>{{message.datetime|date:"d-M-Y H:m:s"}}</td>
                 <td>{{message.identity}}</td>
                 <td>{{message.backend}}</td>
                 <td>{{message.text}}</td>
-                <td>{% if message.is_incoming %}&lt&lt&lt
-                    {% else %}&gt&gt&gt
-                    {% endif %}
-                </td>
+                <td>{% if message.is_incoming %}In{% else %}Out{% endif %}</td>
             </tr>
         {% endfor %}
     </tbody>

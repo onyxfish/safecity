@@ -1,16 +1,19 @@
 from rapidsms.webui.utils import render_to_response
-from models import *
-from datetime import datetime, timedelta
 
+from apps.logger.models import *
 
-def index(req):
-    template_name="logger/index.html"
+def index(request):
+    """
+    Display a list of logged messages
+    """
     incoming = IncomingMessage.objects.order_by('received')
     outgoing = OutgoingMessage.objects.order_by('sent')
-    all = []
-    [ all.append(msg) for msg in incoming ]
-    [ all.append(msg) for msg in outgoing]
-    # sort by date, descending
-    all.sort(lambda x, y: cmp(y.date, x.date))
-    return render_to_response(req, template_name, { "messages": all})
+
+    messages = []
+    messages.extend(incoming)
+    messages.extend(outgoing)
+    
+    messages.sort(lambda x, y: cmp(y.datetime, x.datetime))
+    
+    return render_to_response(request, 'logger/index.html', { "messages": messages })
 
