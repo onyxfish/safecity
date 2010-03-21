@@ -14,21 +14,21 @@ class App(rapidsms.app.App):
     
     def handle(self, message):
         """
-        Log incoming messages.
+        Log incoming messages.  Annotate log entry onto message object.
         """
-        msg = IncomingMessage.objects.create(
+        message.log_entry = IncomingMessage.objects.create(
             sender=message.connection.identity,
             text=message.text,
             backend=message.connection.backend.slug)
             
-        self.debug(msg)
+        self.debug(message.log_entry)
     
     def outgoing(self, message):
         """
         Log outgoing messages
         """
-        msg = OutgoingMessage.objects.create(
+        message.log_entry = OutgoingMessage.objects.create(
             text=message.text, 
             backend=message.connection.backend.slug)
                                              
-        self.debug(msg)
+        self.debug(message.log_entry)

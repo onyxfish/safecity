@@ -18,3 +18,8 @@ class Resident(models.Model):
     location = models.PointField(    
         spatial_index=True,
         help_text='Location extracted from request message. May not be null.')
+    
+    objects = models.GeoManager()
+        
+    def __unicode__(self):
+        return self.phone_number

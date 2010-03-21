@@ -1,24 +1,30 @@
 from django.contrib.gis.db import models
+from django.contrib.gis.measure import D
+
+from apps.signup.models import Resident
 
 class Report(models.Model):
     """
-    Message data for messages that are reporting suspicious activity.
+    Processed data for messages that are reporting suspicious activity.
+    
+    Note that message-text, phone number, and timestamp and not reproduced
+    from the log entry so that they can be centrally anonymized.
     
     TODO: support multi-part messages.
     """
-    text = models.CharField(
-        max_length=160,
-        help_text='Body of the received message.')
-        
-    timestamp = models.DateTimeField(
-        db_index=True,
-        help_text='The date and time that this message was received.')
-        
     location = models.PointField(
-        null=True,
-        help_text='Location extracted from text. May be null if a location could not be deteremined.')
+        spatial_index=True,
+        help_text='Location extracted from the report.')
         
-    reporter = models.CharField(
-        max_length=10,
-        null=True,
-        help_text='The phone number of the reporter. Will be null once the message has been anonymized.')
+    log_entry = models.ForeignKey(
+        'logger.IncomingMessage',
+        
+        help_text='The log entry for this report.')
+
+    objects = models.GeoManager()
+        
+    def find_nearby_residents(self):
+        """
+        Get a list of residents near this report.
+        """
+        return Resident.objects.filter(location__distance_lte=(self.location, D(m=300)))
