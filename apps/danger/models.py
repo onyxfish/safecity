@@ -27,6 +27,10 @@ class Report(models.Model):
         help_text='Date and time this message was received. Approximate if anonymized.')
 
     objects = models.GeoManager()
+    
+    class Meta:
+        ordering = ['-received']
+        get_latest_by = 'received'
         
     def find_nearby_residents(self):
         """

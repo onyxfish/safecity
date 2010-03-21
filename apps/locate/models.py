@@ -1,49 +1,49 @@
 from django.contrib.gis.db import models
 
 ROAD_TYPES = [
-    ('AVE', 'Avenue'),
-    ('BLVD', 'Boulevard'),
-    ('CRES', 'Crescent'),
-    ('CT', 'Court'),
-    ('DR', 'Drive'),
-    ('ER', 'Entrance Ramp'),
-    ('EXPY', 'Expressway'),
-    ('LN', 'Lane'),
-    ('HWY', 'Highway'),
-    ('PKWY', 'Parkway'),
-    ('PL', 'Place'),
-    ('PLZ', 'Plaza'),
-    ('RL', 'RL'),       # Unknown abbrev. Only for "KENNEDY EXPRESS"
-    ('RD', 'Road'),
-    ('ROW', 'Row'),
-    ('SQ', 'Square'),
-    ('SR', 'SR'),       # Unknown abbrev. e.g. "LAKE SHORE" and "KENNEDY EXPRESS"
-    ('ST', 'Street'),
-    ('TER', 'Terrace'),
-    ('TOLL', 'Tollway'),
-    ('WAY', 'Way'),
-    ('XR', 'Exit Ramp'),
+    ('AVE', 'AVENUE'),
+    ('BLVD', 'BOULEVARD'),
+    ('CRES', 'CRESCENT'),
+    ('CT', 'COURT'),
+    ('DR', 'DRIVE'),
+    ('ER', 'ENTRANCE RAMP'),
+    ('EXPY', 'EXPRESSWAY'),
+    ('LN', 'LANE'),
+    ('HWY', 'HIGHWAY'),
+    ('PKWY', 'PARKWAY'),
+    ('PL', 'PLACE'),
+    ('PLZ', 'PLAZA'),
+    ('RL', 'RL (?)'),       # Unknown abbrev. Only for "KENNEDY EXPRESS"
+    ('RD', 'ROAD'),
+    ('ROW', 'ROW'),
+    ('SQ', 'SQUARE'),
+    ('SR', 'SR (?)'),       # Unknown abbrev. e.g. "LAKE SHORE" and "KENNEDY EXPRESS"
+    ('ST', 'STREET'),
+    ('TER', 'TERRACE'),
+    ('TOLL', 'TOLLWAY'),
+    ('WAY', 'WAY'),
+    ('XR', 'EXIT RAMP'),
 ]
 
 ROAD_PREFIX_DIRECTIONS = [
-    ('N', 'North'),
-    ('S', 'South'),
-    ('E', 'East'),
-    ('W', 'West'),
+    ('N', 'NORTH'),
+    ('S', 'SOUTH'),
+    ('E', 'EAST'),
+    ('W', 'WEST'),
 ]
 
 ROAD_SUFFIX_DIRECTIONS = [
-    ('OP', 'Overpass'),
-    ('S', 'South'),
-    ('W', 'West'),
-    ('EB', 'Eastbound'),
-    ('WB', 'Westbound'),
-    ('N', 'North'),
-    ('OB', 'Outbound'),
-    ('NB', 'Northbound'),
-    ('SB', 'Southbound'),
-    ('IB', 'Inbound'),
-    ('E', 'East'),
+    ('OP', 'OVERPASS'),
+    ('S', 'SOUTH'),
+    ('W', 'WEST'),
+    ('EB', 'EASTBOUND'),
+    ('WB', 'WESTBOUND'),
+    ('N', 'NORTH'),
+    ('OB', 'OUTBOUND'),
+    ('NB', 'NORTHBOUND'),
+    ('SB', 'SOUTHBOUND'),
+    ('IB', 'INBOUND'),
+    ('E', 'EAST'),
 ]
 
 ALIAS_TYPES = [
@@ -80,6 +80,9 @@ class Road(models.Model):
         max_length=2,
         choices=ROAD_SUFFIX_DIRECTIONS,
         help_text='Direction this road runs.')
+        
+    class Meta:
+        ordering = ['name', 'road_type', 'prefix_direction', 'suffix_direction']
         
     def __unicode__(self):
         return self.full_name
