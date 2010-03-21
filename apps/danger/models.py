@@ -7,19 +7,24 @@ class Report(models.Model):
     """
     Processed data for messages that are reporting suspicious activity.
     
-    Note that message-text, phone number, and timestamp and not reproduced
-    from the log entry so that they can be centrally anonymized.
-    
     TODO: support multi-part messages.
     """
     location = models.PointField(
         spatial_index=True,
         help_text='Location extracted from the report.')
         
-    log_entry = models.ForeignKey(
-        'logger.IncomingMessage',
+    text = models.CharField(
+        max_length=160,
+        help_text='Body of the message.')
         
-        help_text='The log entry for this report.')
+    sender = models.CharField(
+        max_length=10,
+        null=True,
+        help_text='Phone number of the reporter. None if anonymized.')
+        
+    received = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Date and time this message was received. Approximate if anonymized.')
 
     objects = models.GeoManager()
         

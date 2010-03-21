@@ -20,11 +20,13 @@ class App(rapidsms.app.App):
         """
         if not hasattr(message, 'location') or message.location is None:
             raise NoLocationException(
-                'A message without a location should not reach the danger app for processing.')
+                'A message without a location should never reach the danger app for processing.')
                 
         report = Report.objects.create(
             location=message.location.location,
-            log_entry=message.log_entry)
+            text=message.log_entry.text,
+            sender=message.log_entry.sender,
+            received=message.log_entry.received)
         
         residents = report.find_nearby_residents()
         

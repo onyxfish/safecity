@@ -5,8 +5,13 @@ class MessageBase(models.Model):
     """
     Base model for message logging.
     """
-    text = models.CharField(max_length=160)
-    backend = models.CharField(max_length=150)
+    text = models.CharField(
+        max_length=160,
+        help_text='Body of the message.')
+    
+    backend = models.CharField(
+        max_length=150,
+        help_text='System the message was received through.')
     
     class Meta:
         abstract = True
@@ -15,8 +20,14 @@ class IncomingMessage(MessageBase):
     """
     An incoming message before any processing.
     """
-    sender = models.CharField(max_length=10)
-    received = models.DateTimeField(auto_now_add=True)
+    sender = models.CharField(
+        max_length=10,
+        null=True,
+        help_text='Phone number of sender. None if anonymized.')
+        
+    received = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Date and time this message was received. Approximate if anonymized.')
     
     @property
     def identity(self):
@@ -36,11 +47,13 @@ class OutgoingMessage(MessageBase):
     """
     An outgoing message from the system.
     """
-    sent = models.DateTimeField(auto_now_add=True)
+    sent = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Date and time that this message was sent. Approximate if anonymized.')
     
     @property
     def identity(self):
-        return 'Anonymous'
+        return None
     
     @property
     def datetime(self):
