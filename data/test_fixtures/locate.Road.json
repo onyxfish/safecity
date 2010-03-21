@@ -18,15 +18,5 @@
             "name": "QUINCY", 
             "suffix_direction": ""
         }
-    },
-    {
-        "pk": "S LOTUS AVE", 
-        "model": "locate.road", 
-        "fields": {
-            "road_type": "AVE", 
-            "prefix_direction": "S", 
-            "name": "LOTUS", 
-            "suffix_direction": ""
-        }
     }
 ]

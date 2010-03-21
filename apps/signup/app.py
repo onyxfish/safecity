@@ -43,7 +43,7 @@ class App (rapidsms.app.App):
         """
         if not hasattr(message, 'location') or message.location is None:
             # TODO - wording, helpful example
-            message.respond('We could not find you. Please type your location in your message.')
+            message.respond('We could not find you. Please include your location in your message.')
             return
             
         try:
@@ -66,11 +66,9 @@ class App (rapidsms.app.App):
         """
         try:
             resident = Resident.objects.get(phone_number=message.connection.identity)
+            resident.delete()
         except Resident.DoesNotExist:
-            # TODO - wording
-            message.respond('The phone number you are texting from is not in our system.')
-            return
+            pass
         
-        resident.delete()
-        
-        message.respond('You have been removed from our system and will no longer get messages.')
+        # TODO - wording
+        message.respond('You have been removed from our system and will no longer get text messages.')
