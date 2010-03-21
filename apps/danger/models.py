@@ -27,4 +27,4 @@ class Report(models.Model):
         """
         Get a list of residents near this report.
         """
-        return Resident.objects.filter(location__distance_lte=(self.location, D(m=300)))
+        return Resident.objects.filter(location__distance_lte=(self.location, D(km=1)))

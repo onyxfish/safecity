@@ -31,7 +31,12 @@ class App(rapidsms.app.App):
         self.debug('Broadcasting to %i residents.' % len(residents))
         
         for resident in residents:
-            self.debug('Sending to %s' % resident.phone_number)
+            # Do not send message back to reporter
+            if resident.phone_number == message.connection.identity:
+                self.debug('Not sending to %s because they were the reporter.' % resident.phone_number)
+                continue
+            
+            self.debug('Sending to %s.' % resident.phone_number)
             message.forward(resident.phone_number)
         
         return True
