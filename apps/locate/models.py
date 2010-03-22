@@ -1,55 +1,55 @@
 from django.contrib.gis.db import models
 
-ROAD_TYPES = [
-    ('AVE', 'AVENUE'),
-    ('BLVD', 'BOULEVARD'),
-    ('CRES', 'CRESCENT'),
-    ('CT', 'COURT'),
-    ('DR', 'DRIVE'),
-    ('ER', 'ENTRANCE RAMP'),
-    ('EXPY', 'EXPRESSWAY'),
-    ('LN', 'LANE'),
-    ('HWY', 'HIGHWAY'),
-    ('PKWY', 'PARKWAY'),
-    ('PL', 'PLACE'),
-    ('PLZ', 'PLAZA'),
-    ('RL', 'RL (?)'),       # Unknown abbrev. Only for "KENNEDY EXPRESS"
-    ('RD', 'ROAD'),
-    ('ROW', 'ROW'),
-    ('SQ', 'SQUARE'),
-    ('SR', 'SR (?)'),       # Unknown abbrev. e.g. "LAKE SHORE" and "KENNEDY EXPRESS"
-    ('ST', 'STREET'),
-    ('TER', 'TERRACE'),
-    ('TOLL', 'TOLLWAY'),
-    ('WAY', 'WAY'),
-    ('XR', 'EXIT RAMP'),
-]
+ROAD_PREFIX_DIRECTIONS = {
+    'N': 'NORTH',
+    'S': 'SOUTH',
+    'E': 'EAST',
+    'W': 'WEST',
+}
 
-ROAD_PREFIX_DIRECTIONS = [
-    ('N', 'NORTH'),
-    ('S', 'SOUTH'),
-    ('E', 'EAST'),
-    ('W', 'WEST'),
-]
+ROAD_TYPES = {
+    'AVE': 'AVENUE',
+    'BLVD': 'BOULEVARD',
+    'CRES': 'CRESCENT',
+    'CT': 'COURT',
+    'DR': 'DRIVE',
+    'ER': 'ENTRANCE RAMP',
+    'EXPY': 'EXPRESSWAY',
+    'LN': 'LANE',
+    'HWY': 'HIGHWAY',
+    'PKWY': 'PARKWAY',
+    'PL': 'PLACE',
+    'PLZ': 'PLAZA',
+    'RL': 'RL (?)',       # Unknown abbrev. Only for "KENNEDY EXPRESS"
+    'RD': 'ROAD',
+    'ROW': 'ROW',
+    'SQ': 'SQUARE',
+    'SR': 'SR (?)',       # Unknown abbrev. e.g. "LAKE SHORE" and "KENNEDY EXPRESS"
+    'ST': 'STREET',
+    'TER': 'TERRACE',
+    'TOLL': 'TOLLWAY',
+    'WAY': 'WAY',
+    'XR': 'EXIT RAMP',
+}
 
-ROAD_SUFFIX_DIRECTIONS = [
-    ('OP', 'OVERPASS'),
-    ('S', 'SOUTH'),
-    ('W', 'WEST'),
-    ('EB', 'EASTBOUND'),
-    ('WB', 'WESTBOUND'),
-    ('N', 'NORTH'),
-    ('OB', 'OUTBOUND'),
-    ('NB', 'NORTHBOUND'),
-    ('SB', 'SOUTHBOUND'),
-    ('IB', 'INBOUND'),
-    ('E', 'EAST'),
-]
+ROAD_SUFFIX_DIRECTIONS = {
+    'OP': 'OVERPASS',
+    'S': 'SOUTH',
+    'W': 'WEST',
+    'EB': 'EASTBOUND',
+    'WB': 'WESTBOUND',
+    'N': 'NORTH',
+    'OB': 'OUTBOUND',
+    'NB': 'NORTHBOUND',
+    'SB': 'SOUTHBOUND',
+    'IB': 'INBOUND',
+    'E': 'EAST',
+}
 
-ALIAS_TYPES = [
-    ('MS', 'Misspelling'),
-    ('HN', 'Honorary Name'),
-]
+ALIAS_TYPES = {
+    'MS': 'Misspelling',
+    'HN': 'Honorary Name',
+}
 
 class Road(models.Model):
     """
@@ -63,7 +63,7 @@ class Road(models.Model):
     
     prefix_direction = models.CharField(
         max_length=2,
-        choices=ROAD_PREFIX_DIRECTIONS,
+        choices=ROAD_PREFIX_DIRECTIONS.items(),
         help_text='Direction this road runs.')
     
     name = models.CharField(
@@ -73,12 +73,12 @@ class Road(models.Model):
 
     road_type = models.CharField(
         max_length=4,
-        choices=ROAD_TYPES,
+        choices=ROAD_TYPES.items(),
         help_text='The road type, e.g. Ave.')
 
     suffix_direction = models.CharField(
         max_length=2,
-        choices=ROAD_SUFFIX_DIRECTIONS,
+        choices=ROAD_SUFFIX_DIRECTIONS.items(),
         help_text='Direction this road runs.')
         
     class Meta:
@@ -105,15 +105,15 @@ class Road(models.Model):
         bits = []
         
         if prefix_direction:
-            bits.append(prefix_direction)
+            bits.append(ROAD_PREFIX_DIRECTIONS[prefix_direction])
         
         bits.append(name)
         
         if road_type:
-            bits.append(road_type)
+            bits.append(ROAD_TYPES[road_type])
             
         if suffix_direction:
-            bits.append(suffix_direction)
+            bits.append(ROAD_SUFFIX_DIRECTIONS[suffix_direction])
         
         return ' '.join(bits)
         
@@ -130,7 +130,7 @@ class RoadAlias(models.Model):
 
     alias_type = models.CharField(
         max_length=2,
-        choices=ALIAS_TYPES,
+        choices=ALIAS_TYPES.items(),
         help_text='The type of alias this is, e.g. Misspelling or Honorary Name')
 
 class Intersection(models.Model):
