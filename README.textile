@@ -22,3 +22,5 @@ Due to the sensitive nature of the information handled by this project extreme c
 * Only approximate addresses are ever recorded. It is literally impossible for the system to ever record a location based on exact address.
 * Phone numbers of reporters are anonymized as soon as they can be processed for SPAM, abuse, etc. and before the contents of their reports are made available online or in any other manner.
 * Users who unregister from the system are deleted--no record is kept that they were ever registered.
+
+It is not possible to account for the actions of the carriers who handle the SMS messages before they reach Safecity, but these precautions ensure the anonymity of its users as far as humanly possible.
