@@ -1,0 +1,6 @@
+fabric==0.9.0
+-e svn+http://code.djangoproject.com/svn/django/trunk#egg=django
+-e git+ssh://git@tribune.unfuddle.com/tribune/newsapps.git#egg=newsapps
+-e svn+http://geopy.googlecode.com/svn/tags/release-0.93#egg=geopy
+psycopg2
+python-memcached
