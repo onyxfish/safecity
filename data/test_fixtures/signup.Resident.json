@@ -1,0 +1,23 @@
+[
+    {
+        "pk": "1111111111",
+        "model": "signup.Resident", 
+        "fields": {
+            "location": "POINT (-87.7648636633208241 41.8802459909971319)"
+        }
+    },
+    {
+        "pk": "2222222222",
+        "model": "signup.Resident", 
+        "fields": {
+            "location": "POINT (-87.7575888052088260 41.8775333052919976)"
+        }
+    },
+    {
+        "pk": "3333333333",
+        "model": "signup.Resident", 
+        "fields": {
+            "location": "POINT (-87.7449984427462510 41.8731405033094219)"
+        }
+    }
+]
