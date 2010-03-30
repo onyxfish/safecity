@@ -1,6 +1,6 @@
 [
     {
-        "pk": "S LOCKWOOD AVE", 
+        "pk": "SOUTH LOCKWOOD AVENUE", 
         "model": "locate.road", 
         "fields": {
             "road_type": "AVE", 
@@ -10,12 +10,62 @@
         }
     }, 
     {
-        "pk": "W QUINCY ST", 
+        "pk": "WEST QUINCY STREET", 
         "model": "locate.road", 
         "fields": {
             "road_type": "ST", 
             "prefix_direction": "W", 
             "name": "QUINCY", 
+            "suffix_direction": ""
+        }
+    },
+    {
+        "pk": "NORTH CENTRAL AVENUE", 
+        "model": "locate.road", 
+        "fields": {
+            "road_type": "AVE", 
+            "prefix_direction": "N", 
+            "name": "CENTRAL", 
+            "suffix_direction": ""
+        }
+    },
+    {
+        "pk": "SOUTH CENTRAL AVENUE", 
+        "model": "locate.road", 
+        "fields": {
+            "road_type": "AVE", 
+            "prefix_direction": "S", 
+            "name": "CENTRAL", 
+            "suffix_direction": ""
+        }
+    },
+    {
+        "pk": "SOUTH CICERO AVENUE", 
+        "model": "locate.road", 
+        "fields": {
+            "road_type": "AVE", 
+            "prefix_direction": "S", 
+            "name": "CICERO", 
+            "suffix_direction": ""
+        }
+    },
+    {
+        "pk": "WEST MADISON STREET", 
+        "model": "locate.road", 
+        "fields": {
+            "road_type": "ST", 
+            "prefix_direction": "W", 
+            "name": "MADISON", 
+            "suffix_direction": ""
+        }
+    },
+    {
+        "pk": "WEST HARRISON STREET", 
+        "model": "locate.road", 
+        "fields": {
+            "road_type": "ST", 
+            "prefix_direction": "W", 
+            "name": "HARRISON", 
             "suffix_direction": ""
         }
     }

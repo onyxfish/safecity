@@ -162,15 +162,29 @@ class Command(NoArgsCommand):
         """
         Gets the number of a block from its address range.
         """
-        if from_addr_left < from_addr_right:
-            from_addr = from_addr_left
-        else:
+        # No addresses on left side of road
+        if from_addr_left == 0 and to_addr_left == 0:
+            # No addresses on either side
+            if from_addr_right == 0 and to_addr_right == 0:
+                raise Exception('Unexpected data: block has no valid addresses.')
+            
             from_addr = from_addr_right
-
-        if to_addr_left > to_addr_right:
-            to_addr = to_addr_left
-        else:
             to_addr = to_addr_right
+        # No addresses on right side
+        elif from_addr_right == 0 and to_addr_right == 0:
+            from_addr = from_addr_left
+            to_addr = to_addr_left
+        # Address on both sides
+        else:
+            if from_addr_left < from_addr_right:
+                from_addr = from_addr_left
+            else:
+                from_addr = from_addr_right
+
+            if to_addr_left > to_addr_right:
+                to_addr = to_addr_left
+            else:
+                to_addr = to_addr_right
 
         if to_addr < from_addr:
             raise Exception('Unexpected data: to_addr < from_addr')

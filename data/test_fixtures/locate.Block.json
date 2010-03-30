@@ -3,9 +3,81 @@
         "pk": 1, 
         "model": "locate.block", 
         "fields": {
+            "number": 5200, 
+            "road": "WEST QUINCY STREET", 
+            "location": "POINT (-87.7562760218175981 41.8775505074175243)"
+        }
+    },
+    {
+        "pk": 2, 
+        "model": "locate.block", 
+        "fields": {
             "number": 5300, 
-            "road": "W QUINCY ST", 
+            "road": "WEST QUINCY STREET", 
             "location": "POINT (-87.7586037161508017 41.8775201084817894)"
+        }
+    },
+    {
+        "pk": 3, 
+        "model": "locate.block", 
+        "fields": {
+            "number": 200, 
+            "road": "SOUTH LOCKWOOD AVENUE", 
+            "location": "POINT (-87.7576053297346874 41.8779859860794303)"
+        }
+    },
+    {
+        "pk": 4, 
+        "model": "locate.block", 
+        "fields": {
+            "number": 300, 
+            "road": "SOUTH LOCKWOOD AVENUE", 
+            "location": "POINT (-87.7575371311054653 41.8761739025141964)"
+        }
+    },
+    {
+        "pk": 5, 
+        "model": "locate.block", 
+        "fields": {
+            "number": 5500, 
+            "road": "WEST MADISON STREET", 
+            "location": "POINT (-87.7640257756658997 41.8802583044351024)"
+        }
+    },
+    {
+        "pk": 6, 
+        "model": "locate.block", 
+        "fields": {
+            "number": 0, 
+            "road": "NORTH CENTRAL AVENUE", 
+            "location": "POINT (-87.7648913425531418 41.8812451237027048)"
+        }
+    },
+    {
+        "pk": 7, 
+        "model": "locate.block", 
+        "fields": {
+            "number": 0, 
+            "road": "SOUTH CENTRAL AVENUE", 
+            "location": "POINT (-87.7648490321034416 41.8797483272068689)"
+        }
+    },
+    {
+        "pk": 8, 
+        "model": "locate.block", 
+        "fields": {
+            "number": 4800, 
+            "road": "WEST HARRISON STREET", 
+            "location": "POINT (-87.7461040961870111 41.8731040388357840)"
+        }
+    },
+    {
+        "pk": 9, 
+        "model": "locate.block", 
+        "fields": {
+            "number": 500, 
+            "road": "SOUTH CICERO AVENUE", 
+            "location": "POINT (-87.7450168127421364 41.8736158502459475)"
         }
     }
 ]

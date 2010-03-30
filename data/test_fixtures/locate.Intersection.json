@@ -4,10 +4,33 @@
         "model": "locate.intersection", 
         "fields": {
             "roads": [
-                "S LOCKWOOD AVE", 
-                "W QUINCY ST"
+                "SOUTH LOCKWOOD AVENUE", 
+                "WEST QUINCY STREET"
             ], 
             "location": "POINT (-87.7575888052088260 41.8775333052919976)"
+        }
+    },
+    {
+        "pk": 2, 
+        "model": "locate.intersection", 
+        "fields": {
+            "roads": [
+                "NORTH CENTRAL AVENUE", 
+                "SOUTH CENTRAL AVENUE", 
+                "WEST MADISON STREET"
+            ], 
+            "location": "POINT (-87.7648636633208241 41.8802459909971319)"
+        }
+    },
+    {
+        "pk": 3, 
+        "model": "locate.intersection", 
+        "fields": {
+            "roads": [
+                "SOUTH CICERO AVENUE", 
+                "WEST HARRISON STREET"
+            ], 
+            "location": "POINT (-87.7449984427462510 41.8731405033094219)"
         }
     }
 ]
