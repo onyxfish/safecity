@@ -1,7 +1,5 @@
 from django.contrib.gis.geos import Point
 from django.test import TestCase
-from rapidsms.router import Router
-from rapidsms.tests.scripted import TestScript
 
 from apps.locate.models import *
 from apps.locate.location_parser import *
@@ -19,8 +17,8 @@ class TestLocationParser(TestCase):
     def setUp(self):
         self.parser = LocationParser()
         
-        self.QUINCY = Road.objects.get(full_name='W QUINCY ST')
-        self.LOCKWOOD = Road.objects.get(full_name='S LOCKWOOD AVE')
+        self.QUINCY = Road.objects.get(full_name='WEST QUINCY STREET')
+        self.LOCKWOOD = Road.objects.get(full_name='SOUTH LOCKWOOD AVENUE')
         self.QUINCY_AND_LOCKWOOD = Intersection.find_intersection(self.QUINCY, self.LOCKWOOD)
         self.FIFTY_THREE_HUNDRED_QUINCY = Block.objects.get(number=5300, road=self.QUINCY)
     
