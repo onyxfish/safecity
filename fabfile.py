@@ -226,8 +226,6 @@ def load_new_data():
     """
     Erase the current database and load new data from the SQL dump file.
     """
-    require('settings', provided_by=[production, staging])
-    
     maintenance_up()
     pgpool_down()
     destroy_database()
