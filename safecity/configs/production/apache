@@ -1,0 +1,33 @@
+<VirtualHost *:80>
+    ServerName safecitychicago.org
+    ServerAlias www.safecitychicago.org
+
+    WSGIScriptAlias / /home/newsapps/sites/safecity/repository/safecity/configs/production/production.wsgi
+    <Directory /home/newsapps/sites/safecity/repository/safecity>
+        Order deny,allow
+        Allow from all
+    </Directory>
+    
+    Redirect permanent /favicon.ico http://media.apps.chicagotribune.com/safecity/na_media/favicon.ico
+    
+    Alias /robots.txt /home/newsapps/sites/safecity/repository/safecity/assets/robots.txt
+
+    ErrorLog /home/newsapps/logs/safecity.error.log
+    LogLevel warn
+
+    SetEnvIf X-Forwarded-For "^.*\..*\..*\..*" is-forwarder
+    LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
+    LogFormat "[%h] %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio2
+    CustomLog /home/newsapps/logs/safecity.access.log combinedio env=is-forwarder
+    CustomLog /home/newsapps/logs/safecity.access.log combinedio2 env=!is-forwarder
+
+    ServerSignature Off
+    
+    RewriteEngine on
+    # canonical hostname
+    RewriteCond %{HTTP_HOST} !^safecitychicago.org [NC] 
+    RewriteRule ^/(.*)  http://safecitychicago.org/$1 [L,R]
+    
+    RewriteCond %{REQUEST_URI} /maintenance.html$ 
+    RewriteRule $ / [R=302,L]
+</VirtualHost>
