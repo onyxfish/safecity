@@ -95,7 +95,9 @@ def setup_directories():
     run('mkdir -p %(env_path)s' % env)
     run ('mkdir -p %(log_path)s;' % env)
     sudo('chgrp -R www-data %(log_path)s; chmod -R g+w %(log_path)s;' % env)
-    run('ln -s %(log_path)s %(path)s/logs' % env)
+    
+    with settings(warn_only=True):
+        run('ln -s %(log_path)s %(path)s/logs' % env)
     
 def setup_virtualenv():
     """
@@ -175,13 +177,13 @@ def deploy_to_s3():
     Deploy the latest project site media to S3.
     """
     env.gzip_path = '%(path)s/repository/%(project_name)s/gzip/assets/' % env
-    run(('s3cmd -P --add-header=Content-encoding:gzip --guess-mime-type --rexclude-from=%(path)s/repository/s3exclude sync %(gzip_path)s s3://%(s3_bucket)s/%(project_name)s/%(site_media_prefix)s/') % env)
+    run(('s3cmd -P --add-header=Content-encoding:gzip --guess-mime-type sync %(gzip_path)s s3://%(s3_bucket)s/%(project_name)s/%(site_media_prefix)s/') % env)
 
 def reboot(): 
     """
     Restart the Apache2 server.
     """
-    sudo('/mnt/apps/bin/restart-all-apache.sh')
+    sudo('sudo /etc/init.d/apache2 restart')
     
 def maintenance_down():
     """
@@ -278,7 +280,7 @@ def clear_cache():
     """
     Restart memcache, wiping the current cache.
     """
-    sudo('/mnt/apps/bin/restart-memcache.sh')
+    sudo('sudo /etc/init.d/memcached restart')
     
 def echo_host():
     """
