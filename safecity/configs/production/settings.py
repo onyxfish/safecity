@@ -15,6 +15,8 @@ DATABASE_PASSWORD = 'W34QXl0AER'
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = 'http://media.safecitychicago.org/'
 
+ADMIN_MEDIA_PREFIX = 'http://media.safecitychicago.org/admin_media/'
+
 # Predefined domain
 MY_SITE_DOMAIN = 'safecitychicago.org'
 
