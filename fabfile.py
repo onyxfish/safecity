@@ -133,7 +133,6 @@ def deploy_requirements_to_s3():
     """
     Deploy the latest newsapps and admin media to s3.
     """
-    run('s3cmd del --recursive s3://%(s3_bucket)s/%(project_name)s/%(admin_media_prefix)s/' % env)
     run('s3cmd -P --guess-mime-type sync %(env_path)s/src/django/django/contrib/admin/media/ s3://%(s3_bucket)s/%(project_name)s/%(admin_media_prefix)s/' % env)
     
 """
