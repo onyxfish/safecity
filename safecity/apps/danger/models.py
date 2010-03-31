@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 
-from apps.signup.models import Resident
+from safecity.apps.signup.models import Resident
 
 class Report(models.Model):
     """

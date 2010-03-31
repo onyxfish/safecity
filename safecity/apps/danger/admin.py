@@ -1,6 +1,6 @@
 from django.contrib.gis import admin
 
-from apps.danger.models import *
+from safecity.apps.danger.models import *
 
 class ReportAdmin(admin.OSMGeoAdmin):
     # Basic admin config

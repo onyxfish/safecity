@@ -1,6 +1,0 @@
-psycopg2
-pytz==2010b
-pyserial==2.5-rc2
-ipython
-#Django==1.1.1
-svn+http://code.djangoproject.com/svn/django/trunk/

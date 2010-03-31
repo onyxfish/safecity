@@ -19,7 +19,7 @@ MEDIA_URL = 'http://media.safecitychicago.org/'
 MY_SITE_DOMAIN = 'safecitychicago.org'
 
 # Email
-# EMAIL_HOST = 'mail.tribapps.com'
+# EMAIL_HOST = 'mail.example.com'
 # EMAIL_PORT = 25
 
 # Caching
