@@ -1,6 +1,6 @@
 from django.contrib.gis import admin
 
-from apps.locate.models import *
+from safecity.apps.locate.models import *
 
 class RoadAdmin(admin.OSMGeoAdmin):
     # Basic admin config
