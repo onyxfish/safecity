@@ -1,10 +1,8 @@
 from django.contrib.gis.geos import Point
 from django.test import TestCase
-from rapidsms.router import Router
-from rapidsms.tests.scripted import TestScript
 
-from apps.locate.models import *
-from apps.locate.location_parser import *
+from safecity.apps.locate.models import *
+from safecity.apps.locate.location_parser import *
 
 class TestLocationParser(TestCase):
     """

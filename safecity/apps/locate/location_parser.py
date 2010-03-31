@@ -1,6 +1,6 @@
 import string
 
-from apps.locate.models import *
+from safecity.apps.locate.models import *
 
 # Tokens
 TOKEN_NONE = ''
