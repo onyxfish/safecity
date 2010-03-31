@@ -1,4 +1,6 @@
 import csv
+import logging
+log = logging.getLogger("safecity.locate.load_centerline")
 from optparse import make_option
 import os
 
@@ -9,10 +11,7 @@ from django.contrib.gis.geos import fromstr, Point
 from django.core.management.base import NoArgsCommand, CommandError
 from django.db import connection, transaction
 
-from rapidsms.log import Logger
-log = Logger(level='Debug')
-
-from apps.locate.models import *
+from safecity.apps.locate.models import *
 
 DATA_DIR = 'data/centerline'
 
@@ -29,12 +28,12 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         if options['clear']:
-            log.write(self, 'INFO', 'Clearing all centerline data.')
+            log.info('Clearing all centerline data.')
             Intersection.objects.all().delete()
             Block.objects.all().delete()
             Road.objects.all().delete()
             
-        log.write(self, 'INFO', 'Reading shapefile.')
+        log.info('Reading shapefile.')
         
         if options['test']:
             shapefile = os.path.join(DATA_DIR, 'test/test.shp')
@@ -44,7 +43,7 @@ class Command(NoArgsCommand):
         ds = DataSource(shapefile)
         layer = ds[0]
         
-        log.write(self, 'INFO', 'Importing features.')
+        log.info('Importing features.')
         
         for feature in layer:
             road_name = feature.get('STREET_NAM')
@@ -87,7 +86,7 @@ class Command(NoArgsCommand):
                     location = Point(linestring.coords[-1], srid=9102671)
                     self.create_intersection(road, t_road, location)
                     
-        log.write(self, 'INFO', 'Finished.')
+        log.info('Finished.')
         
     def get_or_create_road(self, road_prefix_direction, road_name, road_type, road_suffix_direction):
         """

@@ -85,6 +85,8 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.gis',
     'django.contrib.sitemaps',
+    
+    'safecity.apps.locate',
 )
 
 # Predefined domain
