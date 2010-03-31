@@ -5,7 +5,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # Database
-DATABASE_HOST = 'safecitychicago.org'
+DATABASE_HOST = 'localhost'
 DATABASE_PORT = '5433'
 DATABASE_USER = 'safecity'
 DATABASE_PASSWORD = 'W34QXl0AER'
