@@ -13,9 +13,9 @@ DATABASE_PASSWORD = 'W34QXl0AER'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://media.safecitychicago.org/'
+MEDIA_URL = 'http://media.safecitychicago.org/safecity/'
 
-ADMIN_MEDIA_PREFIX = 'http://media.safecitychicago.org/admin_media/'
+ADMIN_MEDIA_PREFIX = 'http://media.safecitychicago.org/safecity/admin_media/'
 
 # Predefined domain
 MY_SITE_DOMAIN = 'safecitychicago.org'
