@@ -1,6 +1,6 @@
 from django.contrib.gis import admin
 
-from apps.signup.models import *
+from safecity.apps.signup.models import *
 
 class ResidentAdmin(admin.OSMGeoAdmin):
     # Basic admin config

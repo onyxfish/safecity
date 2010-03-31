@@ -62,12 +62,15 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
@@ -80,6 +83,8 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sites',
+    'django.contrib.auth',
+    'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',
@@ -87,6 +92,8 @@ INSTALLED_APPS = (
     'django.contrib.sitemaps',
     
     'safecity.apps.locate',
+    'safecity.apps.signup',
+    'safecity.apps.danger',
 )
 
 # Predefined domain
