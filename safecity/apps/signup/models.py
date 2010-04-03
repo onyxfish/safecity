@@ -17,7 +17,7 @@ class Resident(models.Model):
     
     location = models.PointField(    
         spatial_index=True,
-        help_text='Location extracted from request message. May not be null.')
+        help_text='Location extracted from request message.')
     
     objects = models.GeoManager()
         
