@@ -1,13 +1,13 @@
-import base64
-import hmac
-import sha
-import time
+import logging
+log = logging.getLogger("safecity.zeep.zeeplib")
 
 from django.conf import settings
 from zeep.sms import connect
 
 from safecity.lib.messages import *
 
+log.error('writing')
+log.error(os.environ)
 ZEEP_CONNECTION = connect(settings.ZEEP_MOBILE_API_KEY, settings.ZEEP_MOBILE_SECRET_KEY)
 
 class ZeepIncomingMessage(IncomingMessage):
