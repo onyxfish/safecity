@@ -1,4 +1,7 @@
+import os
 import string
+
+from django.conf import settings
 
 from safecity.apps.locate.models import *
 
@@ -46,15 +49,15 @@ class LocationParser(object):
         """
         Build word and token sets.
         """
-        with open('data/wordlists/en-basic') as f:
+        with open(os.path.join(settings.DATA_DIR, 'wordlists/en-basic')) as f:
             self.SKIP_WORDS = [word.upper() for word in f.readlines()]
         
-        with open('data/streets/road_types.csv') as f:
+        with open(os.path.join(settings.DATA_DIR, 'streets/road_types.csv')) as f:
             for line in f.readlines():
                 k, v = line.split(',')
                 self.ROAD_TYPES[k] = v
 
-        with open('data/streets/road_directions.csv') as f:
+        with open(os.path.join(settings.DATA_DIR, 'streets/road_directions.csv')) as f:
             for line in f.readlines():
                 k, v = line.split(',')
                 self.ROAD_DIRECTIONS[k] = v
