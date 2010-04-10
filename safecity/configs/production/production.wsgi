@@ -28,8 +28,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../apps")))
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../ext")))
-
 os.environ["DJANGO_SETTINGS_MODULE"] = "safecity.configs.production.settings"
 
 from django.core.handlers.wsgi import WSGIHandler

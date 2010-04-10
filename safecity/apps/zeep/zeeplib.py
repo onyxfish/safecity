@@ -8,8 +8,6 @@ from zeep.sms import connect
 
 from safecity.lib.messages import *
 
-import os
-test = os.environ
 ZEEP_CONNECTION = connect(settings.ZEEP_MOBILE_API_KEY, settings.ZEEP_MOBILE_SECRET_KEY)
 
 class ZeepIncomingMessage(IncomingMessage):
