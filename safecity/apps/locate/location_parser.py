@@ -49,7 +49,7 @@ class LocationParser(object):
         """
         Build word and token sets.
         """
-        p = os.path.realpath(os.path.join(settings.DATA_DIR, 'wordlists/en-basic'))
+        p = os.path.join(settings.DATA_DIR, 'wordlists/en-basic')
         
         with open(os.path.join(settings.DATA_DIR, 'wordlists/en-basic')) as f:
             self.SKIP_WORDS = [word.upper() for word in f.readlines()]
