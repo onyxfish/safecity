@@ -2,48 +2,60 @@ from datetime import datetime
 import logging
 log = logging.getLogger("safecity.zeep.views")
 
+from django.http import HttpResponse
+
 from safecity.apps.locate.location_parser import *
 from safecity.apps.signup.models import Resident
 from safecity.apps.zeep.models import JoinSession
-from safecity.lib.messages import IncomingMessage
+from safecity.apps.zeep.zeeplib import ZeepIncomingMessage
 
 ZEEP_KEYWORD = 'safecity'
 
 UPDATE_KEYWORDS = ('update',)
+
+class ZeepUnexpectedEventException(Exception):
+    pass
+
+class ZeepOkResponse(HttpResponse):
+    def __init__():
+        super(self, HttpResponse).__init__(status=200, content_type='text/plain')
 
 def incoming(request):
     """
     Parse an incoming message from Zeep and issue any appropriate responses.
     
     TODO: how does Zeep handle 'unjoin'?
+    TODO: validate signature of messages from Zeep
     """
-    zeep_msg = request.GET.get('message')    # TODO / TEMP
+    #signature = request.META.get('Authorization')
     
-    message = IncomingMessage(
-        sender=zeep_msg.sender,
-        text=zeep_msg.text,
+    message = ZeepIncomingMessage(
+        sender=request.POST.get('uid', None),
+        text=request.POST.get('body', None),
         received=datetime.now())
     
     # Handle processes that don't require location
-    if message.type == 'join':
+    event = request.POST.get('event', None)
+    
+    if event == 'SUBSCRIPTION_UPDATE':
         return process_join(message)   # TODO - should be processed off process?
-        
-    if message.type == 'quit':
-        return process_quit(message)
-        
-    # TODO: trim 'safecity' keyword?
-        
+   
+    # All other messages are expected to be "mobile originated"
+    if event != 'MO':
+        raise ZeepUnexpectedEventException('Event was: "%s"' % event)
+   
     # Annotate location
     try:
         message.parse_location()
     except NoLocationException:
         message.respond('We were unable to determine your location. Try rephrasing your message using cross-streets.')
-        return HttpOk()
+        return ZeepOkResponse()
     except MultiplePossibleLocationsException:
         message.respond('We were unable to determine your exact location. Try providing more information, such as the block number.')
-        return HttpOk()
+        return ZeepOkResponse()
     except RoadWithoutBlockException:
         message.respond('We were unable to determine your exact location. When stating a street name please include the block number.')
+        return ZeepOkResponse()
     
     # Handle processes that do require location
     if message.sender in JoinSession.objects.all().values('phone_number'):
@@ -68,18 +80,18 @@ def process_join(message):
         
     message.respond('Thank you for joining. Reply with the word "safecity" your location to complete your signup.')
     
-    return HttpOk() 
+    return ZeepOkResponse() 
     
-def process_quit(message):
-    """
-    Process unregistering a resident.
-    """
-    Resident.objects.get(phone_number=message.sender).delete()
-    
-    # TODO - wording.... is this response even possible?
-    message.respond('You have been removed from our system and will no longer get text messages.')
-    
-    return HttpOk()
+# def process_quit(message):
+#     """
+#     Process unregistering a resident.
+#     """
+#     Resident.objects.get(phone_number=message.sender).delete()
+#     
+#     # TODO - wording.... is this response even possible?
+#     message.respond('You have been removed from our system and will no longer get text messages.')
+#     
+#     return ZeepOkResponse()
 
 def process_first_location(message):
     """
@@ -94,7 +106,7 @@ def process_first_location(message):
     # TODO - wording
     message.respond('Thank you for registering. You will now receive messages for your area.')
     
-    return HttpOk()
+    return ZeepOkResponse()
     
 def process_update(message):
     """
@@ -107,7 +119,7 @@ def process_update(message):
     # TODO - wording
     message.respond('Thank you. Your location has been updated.')
     
-    return HttpOk()
+    return ZeepOkResponse()
     
 def process_report(message):
     """
@@ -127,4 +139,4 @@ def process_report(message):
         recipients=[r for r in residents if r.phone_number != message.sender]
         )
         
-    return HttpOk()
+    return ZeepOkResponse()

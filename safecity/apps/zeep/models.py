@@ -6,8 +6,8 @@ class JoinSession(models.Model):
     """
     phone_number = models.CharField(
         primary_key=True,
-        max_length=10,
-        help_text='Phone number this resident joined with.')    
+        max_length=16,
+        help_text='Phone number this resident joined with in e164 format.')    
 
     datetime = models.DateTimeField(
         auto_now=True)

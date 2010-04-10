@@ -12,8 +12,8 @@ class Resident(models.Model):
     """
     phone_number = models.CharField(
         primary_key=True,
-        max_length=10,
-        help_text='Phone number this resident registered with.')
+        max_length=16,
+        help_text='Phone number this resident registered with in e164 format.')
     
     location = models.PointField(    
         spatial_index=True,
