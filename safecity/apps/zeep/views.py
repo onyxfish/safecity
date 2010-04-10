@@ -66,7 +66,7 @@ def incoming(request):
     if keyword in UPDATE_KEYWORDS:
         return process_update(message)
         
-   return process_report(message)
+        return process_report(message)
         
 def process_join(message):
     """

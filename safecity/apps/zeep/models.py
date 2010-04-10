@@ -1,4 +1,4 @@
-from django.contrib.gis import models
+from django.contrib.gis.db import models
 
 class JoinSession(models.Model):
     """
