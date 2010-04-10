@@ -31,7 +31,7 @@ CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 AWS_S3_URL = 's3://media.safecitychicago.org/'
 
 # Path to data files
-DATA_DIR = '../../../data'  # Relative to WSGI
+DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../data"))  # Relative to WSGI
 
 # logging
 import logging.config
