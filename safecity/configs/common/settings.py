@@ -116,8 +116,8 @@ GOOGLE_ANALYTICS_KEY = "UA-15515833-1"
 
 # Zeep
 # None, handled as environment variables or in local_settings
-ZEEP_API_KEY = None
-ZEEP_SECRET_KEY = None
+ZEEP_MOBILE_API_KEY = None
+ZEEP_MOBILE_SECRET_KEY = None
 
 # Data directory
 DATA_DIR = 'data'   # Relative to manage
