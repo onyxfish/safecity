@@ -114,6 +114,11 @@ CACHE_BACKEND="dummy:///"
 # Analytics
 GOOGLE_ANALYTICS_KEY = "UA-15515833-1"
 
+# Zeep
+# None, handled as environment variables or in local_settings
+ZEEP_API_KEY = None
+ZEEP_SECRET_KEY = None
+
 # Logging
 logging.basicConfig(
     level=logging.DEBUG,

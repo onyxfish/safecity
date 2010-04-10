@@ -68,6 +68,9 @@ class LocationParser(object):
         2) Tokenize the words, identifying road names, etc.
         3) Extract location arguments from tokens.
         4) Attempt to pinpoint an exact location using extracted arguments.
+        
+        If searches using all parsed arguments fail the parser will "fall
+        back" to progressively simpler searches in an attempt to find a match.
         """
         words = self._get_words_from_text(text)
         word_tokens = self._tokenize_words(words)

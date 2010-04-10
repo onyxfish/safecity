@@ -1,7 +1,7 @@
 from safecity.configs.common.settings import *
 
 # Debugging
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Database

@@ -9242,7 +9242,7 @@ CREATE TABLE locate_roadalias (
 --
 
 CREATE TABLE signup_resident (
-    phone_number character varying(10) NOT NULL,
+    phone_number character varying(16) NOT NULL,
     location geometry NOT NULL,
     CONSTRAINT enforce_dims_location CHECK ((st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((geometrytype(location) = 'POINT'::text) OR (location IS NULL))),
@@ -9446,7 +9446,7 @@ COPY auth_permission (id, name, content_type_id, codename) FROM stdin;
 --
 
 COPY auth_user (id, username, first_name, last_name, email, password, is_staff, is_active, is_superuser, last_login, date_joined) FROM stdin;
-1	sk			safecitychicago@gmail.com	sha1$0c5a3$8cbd8fee63b9659ce7a203b31274151c74a8d452	t	t	t	2010-03-30 21:21:43.390183-05	2010-03-30 21:21:43.390183-05
+1	safecity			safecitychicago@gmail.com	sha1$f367c$fbb6a20eb67461c4e0055b93bf0e2f6035221636	t	t	t	2010-04-10 14:27:19.05041-05	2010-04-10 14:25:53.092424-05
 \.
 
 
@@ -9511,6 +9511,7 @@ COPY django_content_type (id, name, app_label, model) FROM stdin;
 --
 
 COPY django_session (session_key, session_data, expire_date) FROM stdin;
+13c3278a43644ab13f42109bd6b847d8	gAJ9cQEuNjRjZDIxNThmNWM0NDdkOTAzYTE0YjJkMjkxMjVjNGI=\n	2010-04-24 14:27:33.928457-05
 \.
 
 
