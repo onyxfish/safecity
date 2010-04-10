@@ -119,6 +119,9 @@ GOOGLE_ANALYTICS_KEY = "UA-15515833-1"
 ZEEP_API_KEY = None
 ZEEP_SECRET_KEY = None
 
+# Data directory
+DATA_DIR = 'data'   # Relative to manage
+
 # Logging
 logging.basicConfig(
     level=logging.DEBUG,
