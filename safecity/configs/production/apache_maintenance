@@ -6,14 +6,14 @@
     
     Alias /robots.txt /home/newsapps/sites/safecity/repository/safecity/assets/robots.txt
 
-    ErrorLog /home/newsapps/logs/safecity.error.log
+    ErrorLog /home/newsapps/logs/safecity/apache.error.log
     LogLevel warn
 
     SetEnvIf X-Forwarded-For "^.*\..*\..*\..*" is-forwarder
     LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
     LogFormat "[%h] %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio2
-    CustomLog /home/newsapps/logs/safecity.access.log combinedio env=is-forwarder
-    CustomLog /home/newsapps/logs/safecity.access.log combinedio2 env=!is-forwarder
+    CustomLog /home/newsapps/logs/safecity/apache.access.log combinedio env=is-forwarder
+    CustomLog /home/newsapps/logs/safecity/apache.access.log combinedio2 env=!is-forwarder
 
     ServerSignature Off
     
