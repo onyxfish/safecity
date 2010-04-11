@@ -37,6 +37,9 @@ def incoming(request):
     # Handle processes that don't require location
     event = request.POST.get('event', None)
     
+    log.info(message.sender)
+    log.info(event)
+    
     if event == 'SUBSCRIPTION_UPDATE':
         return process_join(message)   # TODO - should be processed off process?
    
