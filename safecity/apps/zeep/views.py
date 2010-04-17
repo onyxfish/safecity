@@ -2,23 +2,14 @@ from datetime import datetime
 import logging
 log = logging.getLogger("safecity.zeep.views")
 
-from django.http import HttpResponse
-
 from safecity.apps.locate.location_parser import *
 from safecity.apps.signup.models import Resident
 from safecity.apps.zeep.models import JoinSession
-from safecity.apps.zeep.zeeplib import ZeepIncomingMessage
+from safecity.apps.zeep.zeeplib import *
 
 ZEEP_KEYWORD = 'safecity'
 
 UPDATE_KEYWORDS = ('update',)
-
-class ZeepUnexpectedEventException(Exception):
-    pass
-
-class ZeepOkResponse(HttpResponse):
-    def __init__():
-        super(self, HttpResponse).__init__(status=200, content_type='text/plain')
 
 def incoming(request):
     """
@@ -31,7 +22,7 @@ def incoming(request):
     
     message = ZeepIncomingMessage(
         sender=request.POST.get('uid', None),
-        text=request.POST.get('body', None),
+        text=str(request.POST.get('body', None)),   # NOTE: no Unicode support
         received=datetime.now())
     
     # Handle processes that don't require location
@@ -42,7 +33,7 @@ def incoming(request):
     
     if event == 'SUBSCRIPTION_UPDATE':
         return process_join(message)   # TODO - should be processed off process?
-   
+    
     # All other messages are expected to be "mobile originated"
     if event != 'MO':
         raise ZeepUnexpectedEventException('Event was: "%s"' % event)
@@ -51,14 +42,11 @@ def incoming(request):
     try:
         message.parse_location()
     except NoLocationException:
-        message.respond('We were unable to determine your location. Try rephrasing your message using cross-streets.')
-        return ZeepOkResponse()
+        return ZeepReplyResponse('We were unable to determine your location. Try rephrasing your message using cross-streets.')
     except MultiplePossibleLocationsException:
-        message.respond('We were unable to determine your exact location. Try providing more information, such as the block number.')
-        return ZeepOkResponse()
+        return ZeepReplyResponse('We were unable to determine your exact location. Try providing more information, such as the block number.')
     except RoadWithoutBlockException:
-        message.respond('We were unable to determine your exact location. When stating a street name please include the block number.')
-        return ZeepOkResponse()
+        return ZeepReplyResponse('We were unable to determine your exact location. When stating a street name please include the block number.')
     
     # Handle processes that do require location
     if message.sender in JoinSession.objects.all().values('phone_number'):
@@ -69,7 +57,7 @@ def incoming(request):
     if keyword in UPDATE_KEYWORDS:
         return process_update(message)
         
-        return process_report(message)
+    return process_report(message)
         
 def process_join(message):
     """
@@ -78,12 +66,22 @@ def process_join(message):
     """
     # TODO: check if user already exists
     
+    try:
+        Resident.objects.get(phone_number=message.sender)
+        return ZeepReplyResponse('You have already joined Safecity. To change your location text "safecity update" and where you are.')
+    except Resident.DoesNotExist:
+        pass
+        
+    try:
+        JoinSession.objects.get(phone_number=message.sender)
+        return ZeepReplyResponse('Reply to this message wtih the word "safecity" and your location.')
+    except JoinSession.DoesNotExist:
+        pass
+    
     JoinSession.objects.create(
         phone_number=message.sender)
-        
-    message.respond('Thank you for joining. Reply with the word "safecity" your location to complete your signup.')
     
-    return ZeepOkResponse() 
+    return ZeepReplyResponse('Thank you for joining. To finish joining reply to this message with the word "safecity" and your location.')
     
 # def process_quit(message):
 #     """
@@ -120,9 +118,7 @@ def process_update(message):
     resident.save()
     
     # TODO - wording
-    message.respond('Thank you. Your location has been updated.')
-    
-    return ZeepOkResponse()
+    return ZeepReplyResponse('Thank you. Your location has been updated.')
     
 def process_report(message):
     """

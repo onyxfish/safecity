@@ -350,5 +350,5 @@ class LocationParser(object):
         
     def _strip_punctuation(self, s):
         # All of string.punctuation except ampersand
-        punc = '!"#$%\'()*+,-./:;<=>?@[\\]^_`{|}~'
-        return s.translate(string.maketrans('',''), string.punctuation)
+        punctuation = '!"#$%\'()*+,-./:;<=>?@[\\]^_`{|}~'
+        return s.translate(string.maketrans('', ''), punctuation)   
