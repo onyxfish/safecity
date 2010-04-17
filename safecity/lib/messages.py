@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from safecity.apps.locate.location_parser import LocationParser
 
 LOCATION_PARSER = LocationParser()

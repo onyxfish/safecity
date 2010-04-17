@@ -49,8 +49,6 @@ class LocationParser(object):
         """
         Build word and token sets.
         """
-        p = os.path.join(settings.DATA_DIR, 'wordlists/en-basic')
-        
         with open(os.path.join(settings.DATA_DIR, 'wordlists/en-basic')) as f:
             self.SKIP_WORDS = [word.upper() for word in f.readlines()]
         
@@ -215,25 +213,30 @@ class LocationParser(object):
         location.
         
         TODO: more patterns
+        TODO: multiple valid locations in a single string?
         """
+        location = None
         args, pattern = zip(*location_tokens)
         
         if pattern == (TOKEN_ROAD_ARGS, TOKEN_ROAD_ARGS):
             oneway = args[0]
             otherway = args[1]
-            return self._get_intersection(oneway, otherway)
+            location = self._get_intersection(oneway, otherway)
         elif pattern == (TOKEN_ROAD_ARGS, TOKEN_AND, TOKEN_ROAD_ARGS):
             oneway = args[0]
             otherway = args[2]
-            return self._get_intersection(oneway, otherway)
+            location = self._get_intersection(oneway, otherway)
         elif pattern == (TOKEN_BLOCK_NUMBER, TOKEN_ROAD_ARGS):
             block_number = args[0]
             road_args = args[1]
-            return self._get_block(block_number, road_args)
+            location = self._get_block(block_number, road_args)
         elif pattern == (TOKEN_ROAD_ARGS,):
             raise RoadWithoutBlockException()
             
-        return None
+        if location == None:
+            raise NoLocationException()
+            
+        return location
             
     def _get_intersection(self, oneway_args, otherway_args):
         """
@@ -352,5 +355,5 @@ class LocationParser(object):
         
     def _strip_punctuation(self, s):
         # All of string.punctuation except ampersand
-        punc = '!"#$%\'()*+,-./:;<=>?@[\\]^_`{|}~'
-        return s.translate(string.maketrans('',''), string.punctuation)
+        punctuation = '!"#$%\'()*+,-./:;<=>?@[\\]^_`{|}~'
+        return s.translate(string.maketrans('', ''), punctuation)   

@@ -66,6 +66,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'safecity.middleware.exception_logging.ExceptionLoggingMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -94,6 +95,7 @@ INSTALLED_APPS = (
     'safecity.apps.locate',
     'safecity.apps.signup',
     'safecity.apps.danger',
+    'safecity.apps.zeep',
 )
 
 # Predefined domain
@@ -116,8 +118,8 @@ GOOGLE_ANALYTICS_KEY = "UA-15515833-1"
 
 # Zeep
 # None, handled as environment variables or in local_settings
-ZEEP_API_KEY = None
-ZEEP_SECRET_KEY = None
+ZEEP_MOBILE_API_KEY = None
+ZEEP_MOBILE_SECRET_KEY = None
 
 # Data directory
 DATA_DIR = 'data'   # Relative to manage
