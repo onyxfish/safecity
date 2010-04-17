@@ -11,6 +11,6 @@ class JoinSession(models.Model):
 
     datetime = models.DateTimeField(
         auto_now=True)
-
+    
     def __unicode__(self):
         return self.phone_number

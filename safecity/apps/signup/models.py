@@ -22,4 +22,4 @@ class Resident(models.Model):
     objects = models.GeoManager()
         
     def __unicode__(self):
-        return '(%s) %s-%s' % (self.phone_number[0:3], self.phone_number[3:6], self.phone_number[6:10])
+        return self.phone_number
