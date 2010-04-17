@@ -2,6 +2,7 @@ from datetime import datetime
 import logging
 log = logging.getLogger("safecity.zeep.views")
 
+from safecity.apps.danger.models import Report
 from safecity.apps.locate.location_parser import *
 from safecity.apps.signup.models import Resident
 from safecity.apps.zeep.models import JoinSession
@@ -49,10 +50,13 @@ def incoming(request):
         return ZeepReplyResponse('We were unable to determine your exact location. When stating a street name please include the block number.')
     
     # Handle processes that do require location
-    if message.sender in JoinSession.objects.all().values('phone_number'):
+    try:
+        JoinSession.objects.get(phone_number=message.sender)
         return process_first_location(message)
+    except:
+        pass
 
-    keyword = text.split()[0].lower()
+    keyword = message.text.split()[0].lower()
 
     if keyword in UPDATE_KEYWORDS:
         return process_update(message)
@@ -64,8 +68,6 @@ def process_join(message):
     Process setting up a record of a new user and request that they establish
     their location.
     """
-    # TODO: check if user already exists
-    
     try:
         Resident.objects.get(phone_number=message.sender)
         return ZeepReplyResponse('You have already joined Safecity. To change your location text "safecity update" and where you are.')
@@ -104,10 +106,7 @@ def process_first_location(message):
         phone_number=message.sender,
         location=message.location.location)
     
-    # TODO - wording
-    message.respond('Thank you for registering. You will now receive messages for your area.')
-    
-    return ZeepOkResponse()
+    return ZeepReplyResponse('Thank you for registering. You will now receive messages for your area.')
     
 def process_update(message):
     """
@@ -130,12 +129,13 @@ def process_report(message):
         sender=message.sender,
         received=message.received)
     
-    residents = report.find_nearby_residents()
+    recipients = report.find_nearby_residents().exclude(phone_number=message.sender)
     
-    log.debug('Broadcasting to %i residents.' % len(residents))
+    if recipients:
+        log.debug('Broadcasting to %i residents.' % len(recipients))
     
-    message.forward(
-        recipients=[r for r in residents if r.phone_number != message.sender]
-        )
+        message.forward(
+            recipients=recipients
+            )
         
     return ZeepOkResponse()
