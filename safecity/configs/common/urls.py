@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     }),
     
     (r'^zeep/', include('safecity.apps.zeep.urls')),
+    (r'', include('safecity.apps.public.urls')),
 )

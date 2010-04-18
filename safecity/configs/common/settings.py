@@ -96,6 +96,7 @@ INSTALLED_APPS = (
     'safecity.apps.signup',
     'safecity.apps.danger',
     'safecity.apps.zeep',
+    'safecity.apps.public',
 )
 
 # Predefined domain
