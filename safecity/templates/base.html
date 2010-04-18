@@ -1,11 +1,16 @@
+{% load media %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>{% block title %}{% endblock %}</title>
-  <link rel="stylesheet" href="/assets/css/reset.css" type="text/css" charset="utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% build_media_url '/css/reset.css' %}" type="text/css" charset="utf-8"/>
+    <meta name="google-site-verification" content="YeazLNYPKLTWedHOX6b9Nr5Movp7ed-fi9oAxKxM-uE" />
+{% block extrahead %}{% endblock %}
 </head>
 <body>
 {% block content %}{% endblock %}
+{% include "google_analytics.html" %}
 </body>
 </html>
