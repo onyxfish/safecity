@@ -1,1 +1,4 @@
-#report_map { width:960px; height:500px;}
+body { height:100%;}
+#header { background-color:red; padding:5px;}
+#report_map { width:100%; height:90%;}
+#footer { background-color:red;}
