@@ -7,5 +7,11 @@
 <link rel="stylesheet" href="{% build_media_url '/css/public.css' %}" type="text/css" charset="utf-8"/>
 {% endblock %}
 {% block content %}
-joy
+<div style="width:1000px; height:300px;" id="report_map"></div>
+{% endblock %}
+{% block extrafoot %}
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key={{ settings.GOOGLE_MAPS_API_KEY }}" type="text/javascript"></script>
+<script type="text/javascript">
+{% include 'public/index.js' %}
+</script>
 {% endblock %}

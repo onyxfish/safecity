@@ -117,10 +117,12 @@ CACHE_BACKEND="dummy:///"
 # Analytics
 GOOGLE_ANALYTICS_KEY = "UA-15515833-1"
 
-# Zeep
-# None, handled as environment variables or in local_settings
+# None, should be defined in local_settings
 ZEEP_MOBILE_API_KEY = None
 ZEEP_MOBILE_SECRET_KEY = None
+
+# None, should be defined in local_settings.py or derivative configs
+GOOGLE_MAPS_API_KEY = None
 
 # Data directory
 DATA_DIR = 'data'   # Relative to manage

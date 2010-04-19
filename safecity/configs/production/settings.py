@@ -30,6 +30,9 @@ CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 # S3
 AWS_S3_URL = 's3://media.safecitychicago.org/'
 
+# safecitychicago.org
+GOOGLE_MAPS_API_KEY = 'ABQIAAAAeEEcE5fwrl3NFn5WOiwB2RQn_oaEctxU-JiIPYQoMi-CmNuQXBQq607VVoUbetrP34bVkS6TC4gVEw'
+
 # Path to data files
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../data"))  # Relative to WSGI
 
