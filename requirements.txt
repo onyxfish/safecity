@@ -4,4 +4,3 @@ svn+http://geopy.googlecode.com/svn/tags/release-0.93#egg=geopy
 psycopg2
 python-memcached
 ipython
-svn+http://zeep-messaging.googlecode.com/svn/python/trunk#egg=zeep

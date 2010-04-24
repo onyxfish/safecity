@@ -12,7 +12,6 @@ urlpatterns = patterns('',
         'document_root': settings.MEDIA_ROOT
     }),
     
-    (r'^zeep/', include('safecity.apps.zeep.urls')),
     (r'^tropo/', include('safecity.apps.tropo.urls')),
     (r'', include('safecity.apps.public.urls')),
 )

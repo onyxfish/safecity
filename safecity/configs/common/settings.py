@@ -95,7 +95,6 @@ INSTALLED_APPS = (
     'safecity.apps.locate',
     'safecity.apps.signup',
     'safecity.apps.danger',
-    # 'safecity.apps.zeep',
     'safecity.apps.tropo',
     'safecity.apps.public',
 )
@@ -117,10 +116,6 @@ CACHE_BACKEND="dummy:///"
 
 # Analytics
 GOOGLE_ANALYTICS_KEY = "UA-15515833-1"
-
-# None, should be defined in local_settings
-ZEEP_MOBILE_API_KEY = None
-ZEEP_MOBILE_SECRET_KEY = None
 
 # None, should be defined in local_settings.py or derivative configs
 GOOGLE_MAPS_API_KEY = None

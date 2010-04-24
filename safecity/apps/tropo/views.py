@@ -8,6 +8,12 @@ from safecity.apps.signup.models import Resident
 from safecity.apps.tropo.tropolib import *
 from safecity.lib.messages import *
 
+KEYWORDS = {
+    'JOIN': ['join', 'register'],
+    'UPDATE': ['update', 'change'],
+    'QUIT': ['quit', 'leave'],
+}
+
 def incoming(request):
     """
     Process incoming messages from Tropo.
@@ -19,9 +25,12 @@ def incoming(request):
     
     # TODO - strip whitespace
     # TODO - handle blank messages
-    
+
     keyword = message.text.split()[0].lower()
-       
+    
+    if keyword in KEYWORDS['QUIT']:
+        return process_quit(message)
+    
     # Annotate location
     try:
         message.parse_location()
@@ -34,10 +43,11 @@ def incoming(request):
     except RoadWithoutBlockException:
         message.respond('We were unable to determine your exact location. When stating a street name please include the block number.')
         return TropoOkResponse()
-    
-    if keyword == 'join':
-        return process_join(message)   # TODO - should be processed off process?
-    elif keyword == 'update':
+        
+    # TODO - handling should be done off process?
+    if keyword in KEYWORDS['JOIN']:
+        return process_join(message)
+    elif keyword in KEYWORDS['UPDATE']:
         return process_update(message)
 
     return process_report(message)
@@ -48,9 +58,9 @@ def process_join(message):
     their location.
     """
     try:
+        # If the user is already registered process as an update instead
         Resident.objects.get(phone_number=message.sender)
-        message.respond('You have already joined Safecity. To change your location text "update" and where you are.')
-        return TropoOkResponse()
+        return process_update(message)
     except Resident.DoesNotExist:
         resident = Resident.objects.create(
             phone_number=message.sender,
@@ -60,16 +70,19 @@ def process_join(message):
 
     return TropoOkResponse()
 
-# def process_quit(message):
-#     """
-#     Process unregistering a resident.
-#     """
-#     Resident.objects.get(phone_number=message.sender).delete()
-#     
-#     # TODO - wording.... is this response even possible?
-#     message.respond('You have been removed from our system and will no longer get text messages.')
-#     
-#     return ZeepOkResponse()
+def process_quit(message):
+    """
+    Process unregistering a resident.
+    """
+    try:
+        Resident.objects.get(phone_number=message.sender).delete()
+    except Resident.DoesNotExist:
+        pass
+    
+    # TODO - wording...
+    message.respond('You have been removed from our system and will no longer get text messages.')
+    
+    return TropoOkResponse()
 
 def process_update(message):
     """
