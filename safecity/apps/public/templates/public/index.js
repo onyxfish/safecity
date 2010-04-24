@@ -12,7 +12,7 @@ function make_marker(point, html) {
 
 $(document).ready(function() {
     if (GBrowserIsCompatible()) {
-        map = new GMap2(document.getElementById("report_map"));
+        map = new GMap2(document.getElementById("report-map"));
         map.setCenter(new GLatLng({{ map_center.0 }}, {{ map_center.1 }}), 14);
         map.setUIToDefault();
         

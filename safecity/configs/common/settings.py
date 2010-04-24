@@ -95,7 +95,8 @@ INSTALLED_APPS = (
     'safecity.apps.locate',
     'safecity.apps.signup',
     'safecity.apps.danger',
-    'safecity.apps.zeep',
+    # 'safecity.apps.zeep',
+    'safecity.apps.tropo',
     'safecity.apps.public',
 )
 

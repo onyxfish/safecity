@@ -36,7 +36,7 @@ class IncomingMessage(object):
         self.location = LOCATION_PARSER.extract_location(self.text)
         
     def respond(self, text):
-        self.outgoing_cls(self.sender, text).send()
+        self.outgoing_cls([self.sender], text).send()
         
     def forward(self, recipients):
         self.outgoing_cls(recipients, self.text).send()

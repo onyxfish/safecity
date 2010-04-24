@@ -281,6 +281,16 @@ def echo_host():
     Echo the current host to the command line.
     """
     run('echo %(settings)s; echo %(hosts)s' % env)
+    
+def sync_tropo():
+    """
+    Synchronizes hosted scripts to Tropo using WebDAV.
+    
+    Tropo must be mounted at /Volumes/webdav.tropo.com.
+    
+    TODO: sync entire directory
+    """
+    local('cp safecity/apps/tropo/hosted_scripts/safecitychicago_router.py /Volumes/webdav.tropo.com/')
 
 """
 Deaths, destroyers of worlds
