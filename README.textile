@@ -6,7 +6,7 @@ Safecity is a project to provide low-income neighborhoods in American cities the
 
 h2. Genesis
 
-Safecity is inspired by "Ushahidi":http://www.ushahidi.com and built with "RapidSMS":http://www.rapidsms.org/, a project of "UNICEF":http://www.unicef.org/. These two projects have been used to great affect to combat the logistical problems of managing safety and resources in crisis zones and in the developing world.  The motivation behind adapting these principles to areas of the United States is simple: gang violence *is* a crisis.  There is no other adequate way to describe the problems which the residents of low-income, inner-city neighborhoods face on a daily basis.  Safecity is an attempt to provide these people with the tools to protect themselves.
+Safecity is inspired by "Ushahidi":http://www.ushahidi.com/.  This project has been used to great affect to combat the logistical problems of managing safety and resources in crisis zones and in the developing world.  The motivation behind adapting these principles to areas of the United States is simple: gang violence *is* a crisis.  There is no other adequate way to describe the problems which the residents of low-income, inner-city neighborhoods face on a daily basis.  Safecity is an attempt to provide these people with the tools to protect themselves.
 
 h2. Objectives
 

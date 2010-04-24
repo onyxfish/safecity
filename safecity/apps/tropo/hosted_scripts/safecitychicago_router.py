@@ -18,6 +18,7 @@ else:
     recipients = recipients.split(',')
     
     for recipient in recipients:
+        log(recipient)
         call('tel:' + recipient, { 'channel': 'TEXT', 'network': 'SMS' })
         say(text)
         hangup()
