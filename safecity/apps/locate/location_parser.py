@@ -127,7 +127,7 @@ class LocationParser(object):
             if words[i].isdigit() and len(words[i]) <= 5:
                 word_tokens[i] = TOKEN_NUMBER
         
-        # Scan for road names
+        # Scan for single-word road names
         for i in range(0, word_count):
             # Skip words that have already been tokenized
             if word_tokens[i]:
@@ -143,7 +143,43 @@ class LocationParser(object):
                 # Rewrite the token with the canonical name
                 words[i] = alias.fetch_canonical_name()
             except RoadAlias.DoesNotExist:
-                pass
+                continue
+                
+        # Scan for two word road names
+        # TODO: extend to handle n word names?
+        for i in range(0, word_count):
+            # Skip words that have already been tokenized
+            try:
+                if word_tokens[i]:
+                    continue
+            except IndexError:
+                # Overshot end of words because some were deleted
+                # (this is good, it means we found something)
+                continue
+            
+            try:
+                # Two untokenized words?
+                if word_tokens[i + 1]:
+                    continue
+            except IndexError:
+                # End of words
+                break
+            
+            # Try two word phrase
+            phrase = ' '.join(words[i:i + 2])
+            
+            try:
+                alias = RoadAlias.objects.get(name__exact=phrase)
+                
+                words[i] = alias.fetch_canonical_name()
+                word_tokens[i] = TOKEN_ROAD
+                
+                del words[i + 1]
+                del word_tokens[i + 1]
+                
+                continue
+            except RoadAlias.DoesNotExist:
+                continue
                 
         return zip(words, word_tokens)
         

@@ -154,6 +154,11 @@ class TestLocationParser(TestCase):
     def testThreeStreets(self):
         message = 'Quincy, Lotus, and Lockwood'
         self.assertRaises(NoLocationException, self.parser.extract_location, message)
+    
+    def testMultiWordStreetAlias(self):
+        # Should return 5300 W Quincy
+        message = '5300 W Fazlur Khan'
+        self.assertRaises(NoLocationException, self.parser.extract_location, message)
         
     # Aliases
     def testAliasMisspelling(self):
