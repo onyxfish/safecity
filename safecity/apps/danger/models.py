@@ -18,9 +18,9 @@ class Report(models.Model):
         help_text='Body of the message.')
         
     sender = models.CharField(
-        max_length=10,
+        max_length=16,
         null=True,
-        help_text='Phone number of the reporter. None if anonymized.')
+        help_text='Phone number of the reporter in e164 format. None if anonymized.')
         
     received = models.DateTimeField(
         auto_now_add=True,

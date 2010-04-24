@@ -100,7 +100,7 @@ def process_report(message):
         log.debug('Broadcasting to %i residents.' % len(recipients))
 
         message.forward(
-            recipients=recipients
+            recipients=[r.phone_number for r in recipients]
             )
 
     return TropoOkResponse()

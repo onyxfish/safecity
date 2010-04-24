@@ -5,7 +5,7 @@ if (currentCall):
     log('Incoming call from %s' % currentCall.callerID)
     
     params = {
-        'sender': currentCall.callerID,
+        'sender': '+' + currentCall.callerID,
         'text': currentCall.initialText,
         'channel': currentCall.channel,
         'network': currentCall.network,
@@ -18,6 +18,6 @@ else:
     recipients = recipients.split(',')
     
     for recipient in recipients:
-        call('tel:+' + recipient, { 'channel': 'TEXT', 'network': 'SMS' })
+        call('tel:' + recipient, { 'channel': 'TEXT', 'network': 'SMS' })
         say(text)
         hangup()
