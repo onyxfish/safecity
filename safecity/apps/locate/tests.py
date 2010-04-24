@@ -10,6 +10,7 @@ class TestLocationParser(TestCase):
     """
     fixtures = [
         'data/test_fixtures/locate.Road.json', 
+        'data/test_fixtures/locate.RoadAlias.json',
         'data/test_fixtures/locate.Intersection.json', 
         'data/test_fixtures/locate.Block.json'
         ]
@@ -19,7 +20,12 @@ class TestLocationParser(TestCase):
         
         self.QUINCY = Road.objects.get(full_name='WEST QUINCY STREET')
         self.LOCKWOOD = Road.objects.get(full_name='SOUTH LOCKWOOD AVENUE')
+        self.NORTH_CENTRAL = Road.objects.get(full_name='NORTH CENTRAL AVENUE')
+        self.SOUTH_CENTRAL = Road.objects.get(full_name='SOUTH CENTRAL AVENUE')
+        self.MADISON = Road.objects.get(full_name='WEST MADISON STREET')
         self.QUINCY_AND_LOCKWOOD = Intersection.find_intersection(self.QUINCY, self.LOCKWOOD)
+        self.NORTH_CENTRAL_AND_MADISON = Intersection.find_intersection(self.NORTH_CENTRAL, self.MADISON)
+        self.SOUTH_CENTRAL_AND_MADISON = Intersection.find_intersection(self.SOUTH_CENTRAL, self.MADISON)
         self.FIFTY_THREE_HUNDRED_QUINCY = Block.objects.get(number=5300, road=self.QUINCY)
     
     # Missing data
@@ -92,6 +98,17 @@ class TestLocationParser(TestCase):
         message = 'N Quincy Ave E & N Lockwood Pkwy W'
         self.assertEqual(self.parser.extract_location(message), self.QUINCY_AND_LOCKWOOD)
         
+    def testIntersectionsEquivalent(self):
+        self.assertEqual(self.NORTH_CENTRAL_AND_MADISON, self.SOUTH_CENTRAL_AND_MADISON)
+        
+    def testIntersectionsNorthSouthPartOne(self):
+        message = 'Madison & Central'
+        self.assertEqual(self.parser.extract_location(message), self.NORTH_CENTRAL_AND_MADISON)
+        
+    def testIntersectionsNorthSouthPartTwo(self):
+        message = 'Madison & Central'
+        self.assertEqual(self.parser.extract_location(message), self.SOUTH_CENTRAL_AND_MADISON)
+        
     # Blocks
     def testBlock(self):
         message = '5300 Quincy'
@@ -129,11 +146,16 @@ class TestLocationParser(TestCase):
         message = '5300 block of Quincy St'
         self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
         
-    # Edge cases
+    # Unhandled edge cases
     def testBetween(self):
         message = 'Quincy between Lotus and Lockwood'
-        self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
+        self.assertRaises(NoLocationException, self.parser.extract_location, message)
     
     def testThreeStreets(self):
-        message= 'Quincy, Lotus, and Lockwood'
+        message = 'Quincy, Lotus, and Lockwood'
+        self.assertRaises(NoLocationException, self.parser.extract_location, message)
+        
+    # Aliases
+    def testAliasMisspelling(self):
+        message = '5300 W Qiuncy'
         self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)

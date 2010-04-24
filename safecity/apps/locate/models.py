@@ -47,6 +47,7 @@ ROAD_SUFFIX_DIRECTIONS = {
 }
 
 ALIAS_TYPES = {
+    'CA': 'Canonical',
     'MS': 'Misspelling',
     'HN': 'Honorary Name',
 }
@@ -69,7 +70,7 @@ class Road(models.Model):
     name = models.CharField(
         max_length=64,
         db_index=True,
-        help_text='The road name.')
+        help_text='The canonical road name.')
 
     road_type = models.CharField(
         max_length=4,
@@ -120,18 +121,35 @@ class Road(models.Model):
 class RoadAlias(models.Model):
     """
     An alternate name for a Road.
+    
+    Note that in reality this is joined ManyToMany with Road, because there
+    are version of each road for each direction, etc.  However, the name
+    attribute on each of those roads should always be the same.  See
+    fetch_canonical_name() for how this is used.
     """
     name = models.CharField(
         primary_key=True,
         max_length=64,
         help_text='Alternate name or spelling for a Road.')
         
-    road = models.ForeignKey('Road')
+    roads = models.ManyToManyField('Road')
 
     alias_type = models.CharField(
         max_length=2,
         choices=ALIAS_TYPES.items(),
         help_text='The type of alias this is, e.g. Misspelling or Honorary Name')
+        
+    def fetch_canonical_name(self):
+        """
+        Returns the canonical name for the road(s) this is an alias of.
+        """
+        if self.alias_type == 'CA':
+            # Avoid querying if this alias also holds the canonical name
+            return self.name
+        else:
+            # Query any road in the set and return its name
+            a_road = self.roads.all()[0]
+            return a_road.name
 
 class Intersection(models.Model):
     """

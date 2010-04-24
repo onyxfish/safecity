@@ -28,10 +28,11 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         if options['clear']:
-            log.info('Clearing all centerline data.')
+            log.info('Clearing all centerline data and aliases.')
             Intersection.objects.all().delete()
             Block.objects.all().delete()
             Road.objects.all().delete()
+            RoadAlias.objects.all().delete()
             
         log.info('Reading shapefile.')
         
@@ -104,6 +105,20 @@ class Command(NoArgsCommand):
                 road_type=road_type,
                 suffix_direction=road_suffix_direction
                 )
+            
+            try:
+                alias = RoadAlias.objects.get(
+                    name=road_name,
+                    alias_type='CA'
+                )
+            except RoadAlias.DoesNotExist:
+                # Create "root" alias--exactly the original name
+                alias = RoadAlias.objects.create(
+                    name=road_name,
+                    alias_type='CA'
+                )
+                
+            alias.roads.add(road)
                 
         return road
         

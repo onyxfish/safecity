@@ -1,0 +1,73 @@
+[ 
+    {
+        "pk": "LOCKWOOD", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "SOUTH LOCKWOOD AVENUE"
+            ],
+            "alias_type": "CA"
+        }
+    },
+    {
+        "pk": "QUINCY", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "WEST QUINCY STREET"
+            ],
+            "alias_type": "CA"
+        }
+    },
+    {
+        "pk": "QIUNCY", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "WEST QUINCY STREET"
+            ],
+            "alias_type": "MS"
+        }
+    },
+    {
+        "pk": "CENTRAL", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "NORTH CENTRAL AVENUE",
+                "SOUTH CENTRAL AVENUE"
+            ],
+            "alias_type": "CA"
+        }
+    },
+    {
+        "pk": "CICERO", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "SOUTH CICERO AVENUE"
+            ],
+            "alias_type": "CA"
+        }
+    },
+    {
+        "pk": "MADISON", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "WEST MADISON STREET"
+            ],
+            "alias_type": "CA"
+        }
+    },
+    {
+        "pk": "HARRISON", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "WEST HARRISON STREET"
+            ],
+            "alias_type": "CA"
+        }
+    }
+]

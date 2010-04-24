@@ -133,11 +133,17 @@ class LocationParser(object):
             if word_tokens[i]:
                 continue
             
-            roads = Road.objects.filter(name__exact=words[i])
-            
-            if roads:
+            try:
+                # Attempt to grab an alias with this exact spelling
+                alias = RoadAlias.objects.get(name__exact=words[i])
+                
                 # At least one road has this name
                 word_tokens[i] = TOKEN_ROAD
+                
+                # Rewrite the token with the canonical name
+                words[i] = alias.fetch_canonical_name()
+            except RoadAlias.DoesNotExist:
+                pass
                 
         return zip(words, word_tokens)
         
