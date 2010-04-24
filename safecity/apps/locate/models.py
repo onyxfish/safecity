@@ -48,8 +48,11 @@ ROAD_SUFFIX_DIRECTIONS = {
 
 ALIAS_TYPES = {
     'CA': 'Canonical',
+    'AL': 'Alternate',
+    'HN': 'Honorary',
+    'EM': 'Emergency Services',
+    'NC': 'Naming Convention',
     'MS': 'Misspelling',
-    'HN': 'Honorary Name',
 }
 
 class Road(models.Model):
