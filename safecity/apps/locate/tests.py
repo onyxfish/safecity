@@ -146,6 +146,26 @@ class TestLocationParser(TestCase):
         message = '5300 block of Quincy St'
         self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
         
+    # Aliases    
+    def testMultiWordStreetAlias(self):
+        # Should return 5300 W Quincy
+        message = '5300 W Fazlur Khan'
+        self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
+        
+    def testMultiWordStreetAliasIntersection(self):
+        # Should return 5300 W Quincy
+        message = 'Fazlur Khan & Lockwood'
+        self.assertEqual(self.parser.extract_location(message), self.QUINCY_AND_LOCKWOOD)
+            
+    def testMultiWordStreetAliasWithContext(self):
+        # Should return 5300 W Quincy
+        message = 'Holy cow! There is some nonsense happenin @ 5300 W Fazlur Khan! lol!'
+        self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
+        
+    def testAliasMisspelling(self):
+        message = '5300 W Qiuncy'
+        self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
+        
     # Unhandled edge cases
     def testBetween(self):
         message = 'Quincy between Lotus and Lockwood'
@@ -154,13 +174,3 @@ class TestLocationParser(TestCase):
     def testThreeStreets(self):
         message = 'Quincy, Lotus, and Lockwood'
         self.assertRaises(NoLocationException, self.parser.extract_location, message)
-    
-    def testMultiWordStreetAlias(self):
-        # Should return 5300 W Quincy
-        message = '5300 W Fazlur Khan'
-        self.assertRaises(NoLocationException, self.parser.extract_location, message)
-        
-    # Aliases
-    def testAliasMisspelling(self):
-        message = '5300 W Qiuncy'
-        self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)

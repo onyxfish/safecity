@@ -30,6 +30,16 @@
         }
     },
     {
+        "pk": "FAZLUR KHAN", 
+        "model": "locate.roadalias", 
+        "fields": {
+            "roads": [
+                "WEST QUINCY STREET"
+            ],
+            "alias_type": "HN"
+        }
+    },
+    {
         "pk": "CENTRAL", 
         "model": "locate.roadalias", 
         "fields": {
