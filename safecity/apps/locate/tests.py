@@ -166,6 +166,10 @@ class TestLocationParser(TestCase):
         message = '5300 W Qiuncy'
         self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
         
+    def testIntersectionWithSelf(self):
+        message = 'Quincy & Fazlur Khan'
+        self.assertRaises(MultiplePossibleLocationsException, self.parser.extract_location, message)
+        
     # Unhandled edge cases
     def testBetween(self):
         message = 'Quincy between Lotus and Lockwood'

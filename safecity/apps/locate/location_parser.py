@@ -1,9 +1,14 @@
 import os
+import re
 import string
 
 from django.conf import settings
 
 from safecity.apps.locate.models import *
+
+# Regexes
+PUNCTUATION_STRIPPER = re.compile('[\!\"\#\$\%\\\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\]\^\_\`\{\|\}\~]+')
+WHITESPACE_SPLITTER = re.compile('\s+')
 
 # Tokens
 TOKEN_NONE = ''
@@ -89,7 +94,11 @@ class LocationParser(object):
         Takes a raw message and returns a list of words prepared to
         be tokenized.
         """
-        return self._strip_punctuation(text).upper().split()
+        text = text.upper()
+        text = PUNCTUATION_STRIPPER.sub(' ', text)
+        text = text.strip()
+        words = WHITESPACE_SPLITTER.split(text)
+        return words
         
     def _tokenize_words(self, words):
         """
@@ -393,8 +402,3 @@ class LocationParser(object):
 
         # No block of this number on a road of this name
         return None
-        
-    def _strip_punctuation(self, s):
-        # All of string.punctuation except ampersand
-        punctuation = '!"#$%\'()*+,-./:;<=>?@[\\]^_`{|}~'
-        return s.translate(string.maketrans('', ''), punctuation)   
