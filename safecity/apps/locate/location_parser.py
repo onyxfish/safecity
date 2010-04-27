@@ -22,6 +22,7 @@ TOKEN_NUMBER = '<NUMBER>'
 
 TOKEN_AND = '<AND>'
 TOKEN_BETWEEN = '<BETWEEN>'
+TOKEN_BLOCK_OF = '<BLOCK_OF>'
 
 TOKEN_ROAD_ARGS = '<ROAD_ARGS>'
 TOKEN_BLOCK_NUMBER = '<BLOCK_NUMBER>'
@@ -34,6 +35,21 @@ class MultiplePossibleLocationsException(Exception):
     
 class RoadWithoutBlockException(Exception):
     pass
+    
+def find_sub_sequences(needle, haystack):
+    """
+    Find any number of occurences of list 'needle' inside within list
+    'haystack.'
+    
+    Via Derek Martin:
+    http://bytes.com/topic/python/answers/836221-test-if-list-contains-another-list
+    """
+    results = []
+    needle_len = len(needle)
+    for i in range(len(haystack)):
+        if haystack[i:i+needle_len] == needle:
+            results.append(i)
+            return results
  
 class LocationParser(object):
     """
@@ -48,6 +64,7 @@ class LocationParser(object):
         'BETWEEN': TOKEN_BETWEEN,
         'BTWN': TOKEN_BETWEEN,
         'BTWEEN': TOKEN_BETWEEN,
+        'BLOCKOF': TOKEN_BLOCK_OF,  # See note in _get_words_from_text()
     }
     
     def __init__(self):
@@ -97,6 +114,10 @@ class LocationParser(object):
         text = text.upper()
         text = PUNCTUATION_STRIPPER.sub(' ', text)
         text = text.strip()
+        
+        # Manual hack to handle the only two-word magic string
+        text = text.replace('BLOCK OF', 'BLOCKOF')
+        
         words = WHITESPACE_SPLITTER.split(text)
         return words
         
@@ -194,7 +215,10 @@ class LocationParser(object):
     def _substitute_road_args(self, word_tokens):
         """
         Takes a zip of words and tokens and generates a new zip containing
-        only location specific tokens (TOKEN_ROAD_ARGS, TOKEN_AND, etc.)
+        only location specific tokens (TOKEN_BLOCK_NUMBER, TOKEN_ROAD_ARGS,
+        etc.)
+        
+        TODO: rework with XML-style annotated strings? Pyparsing?
         """
         word_count = len(word_tokens)
         new_tokens = []
@@ -202,13 +226,7 @@ class LocationParser(object):
         for i in range(0, word_count):
             word, token = word_tokens[i]
         
-            if token == TOKEN_AND:
-                new_tokens.append((word, TOKEN_AND))
-                continue
-            elif token == TOKEN_BETWEEN:
-                new_tokens.append((word, TOKEN_BETWEEN))
-                continue
-            elif token != TOKEN_ROAD:
+            if token != TOKEN_ROAD:
                 continue
             
             road_prefix_direction = None
@@ -220,28 +238,50 @@ class LocationParser(object):
             if i > 0:
                 word, token = word_tokens[i - 1]
             
+                # North Austin
                 if token == TOKEN_DIRECTION:
                     road_prefix_direction = word
                 
                     if i - 1 > 0:
                         word, token = word_tokens[i - 2]
                     
+                        # 5300 N Austin
                         if token == TOKEN_NUMBER:
                             block_number = Block.to_block_number(int(word))
+                        # Block of Austin
+                        elif token == TOKEN_BLOCK_OF:
+                            if i - 2 > 0:
+                                word, token = word_tokens[i - 3]
+
+                                # 5300 Block of N Austin
+                                if token == TOKEN_NUMBER:
+                                    block_number = Block.to_block_number(int(word))
+                # Block of Austin
+                elif token == TOKEN_BLOCK_OF:
+                    if i - 1 > 0:
+                        word, token = word_tokens[i - 2]
+
+                        # 5300 Block of Austin
+                        if token == TOKEN_NUMBER:
+                            block_number = Block.to_block_number(int(word))
+                # 5300 Austin
                 elif token == TOKEN_NUMBER:
                     block_number = Block.to_block_number(int(word))
                 
             if i + 1 < word_count:
                 word, token = word_tokens[i + 1]
             
+                # Austin Ave
                 if token == TOKEN_ROAD_TYPE:
                     road_type = word
                 
                     if i + 2 < word_count:
                         word, token = word_tokens[i + 2]
                     
+                        # Austin Ave N
                         if token == TOKEN_DIRECTION:
                             road_suffix_direction = word
+                # Austin N
                 elif token == TOKEN_DIRECTION:
                     road_suffix_direction = word
         
@@ -261,25 +301,14 @@ class LocationParser(object):
         """
         Takes a fully-substituted string and attempts to determine an exact
         location.
-        
-        TODO: more patterns
-        TODO: multiple valid locations in a single string?
         """
         location = None
         args, pattern = zip(*location_tokens)
         
         if pattern == (TOKEN_ROAD_ARGS, TOKEN_ROAD_ARGS):
-            oneway = args[0]
-            otherway = args[1]
-            location = self._get_intersection(oneway, otherway)
-        elif pattern == (TOKEN_ROAD_ARGS, TOKEN_AND, TOKEN_ROAD_ARGS):
-            oneway = args[0]
-            otherway = args[2]
-            location = self._get_intersection(oneway, otherway)
+            location = self._get_intersection(args[0], args[1])
         elif pattern == (TOKEN_BLOCK_NUMBER, TOKEN_ROAD_ARGS):
-            block_number = args[0]
-            road_args = args[1]
-            location = self._get_block(block_number, road_args)
+            location = self._get_block(args[0], args[1])
         elif pattern == (TOKEN_ROAD_ARGS,):
             raise RoadWithoutBlockException()
             

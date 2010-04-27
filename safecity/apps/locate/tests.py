@@ -139,11 +139,15 @@ class TestLocationParser(TestCase):
         self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
         
     def testBlockBadLargeNumber(self):
-        message = '111000 Quincy St'
+        message = '111000 Quincy Ave'
         self.assertRaises(RoadWithoutBlockException, self.parser.extract_location, message)
         
     def testBlockOf(self):
-        message = '5300 block of Quincy St'
+        message = '5300 block of Quincy Ave'
+        self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
+        
+    def testBlockOfWithDirection(self):
+        message = '5300 block of West Quincy Ave'
         self.assertEqual(self.parser.extract_location(message), self.FIFTY_THREE_HUNDRED_QUINCY)
         
     # Aliases    
@@ -169,12 +173,12 @@ class TestLocationParser(TestCase):
     def testIntersectionWithSelf(self):
         message = 'Quincy & Fazlur Khan'
         self.assertRaises(MultiplePossibleLocationsException, self.parser.extract_location, message)
+    
+    # Explicitly silenced edge cases
+    def testThreeStreetsBetween(self):
+        message = 'Quincy, Lotus, and Lockwood'
+        self.assertRaises(NoLocationException, self.parser.extract_location, message)
         
-    # Unhandled edge cases
     def testBetween(self):
         message = 'Quincy between Lotus and Lockwood'
-        self.assertRaises(NoLocationException, self.parser.extract_location, message)
-    
-    def testThreeStreets(self):
-        message = 'Quincy, Lotus, and Lockwood'
         self.assertRaises(NoLocationException, self.parser.extract_location, message)
