@@ -24,3 +24,7 @@ Due to the sensitive nature of the information handled by this project extreme c
 * Users who unregister from the system are deleted--no record is kept that they were ever registered.
 
 It is not possible to account for the actions of the carriers who handle the SMS messages before they reach Safecity, but these precautions ensure the anonymity of its users as far as humanly possible.
+
+h2. Licensing
+
+All source code developed as part of the Safecity project is licensed under the "MIT License":http://www.opensource.org/licenses/mit-license.php as documented in the COPYING file.  All text and other assets produced to accompany the source code is licensed under the "Creative Commons Attribution 3.0 United States License":http://creativecommons.org/licenses/by/3.0/us/.  These licenses allow the maximum possible reuse by other organizations looking to implement some or all of the ideas that they embody.
