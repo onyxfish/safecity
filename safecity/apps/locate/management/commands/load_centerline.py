@@ -15,6 +15,18 @@ from safecity.apps.locate.models import *
 
 DATA_DIR = 'data/centerline'
 
+class NoAddressesException(Exception):
+    """
+    Exception raise when a block has no zoned addresses.
+    """
+    pass
+    
+class InvalidAddressRangeException(Exception):
+    """
+    Raised when a block's address data does not match expectations.
+    """
+    pass
+
 class Command(NoArgsCommand):
     title = 'locate.load_centerline'
     help = 'Import centerline road data into the database using the Django models.'
@@ -139,8 +151,18 @@ class Command(NoArgsCommand):
         except OGRException:
             return
         
-        block_number = self.get_block_number(
-            from_addr_left, to_addr_left, from_addr_right, to_addr_right)
+        try:
+            block_number = self.get_block_number(
+                from_addr_left, to_addr_left, from_addr_right, to_addr_right)
+        except NoAddressesException:
+            # For our purposes a block without addresses is no block at all
+            log.debug('Skipping block creation for segment of %s with no addresses.' % road.full_name)
+            return
+        except InvalidAddressRangeException:
+            # Don't die on these types of errors--will fix them as we can
+            log.error('Invalid address range for segment of %s, bounds were %s, %s, %s, %s.' % 
+                (road.full_name, from_addr_left, to_addr_left, from_addr_right, to_addr_right))
+            return
             
         # Get center-point of block
         location = fromstr(self.estimate_point_along_linestring(linestring, 0.50), srid=9102671)
@@ -165,7 +187,7 @@ class Command(NoArgsCommand):
         if from_addr_left == 0 and to_addr_left == 0:
             # No addresses on either side
             if from_addr_right == 0 and to_addr_right == 0:
-                raise Exception('Unexpected data: block has no valid addresses.')
+                raise NoAddressesException()
             
             from_addr = from_addr_right
             to_addr = to_addr_right
@@ -186,7 +208,7 @@ class Command(NoArgsCommand):
                 to_addr = to_addr_right
 
         if to_addr < from_addr:
-            raise Exception('Unexpected data: to_addr < from_addr')
+            raise InvalidAddressRangeException()
 
         return Block.to_block_number(from_addr)
         

@@ -7,8 +7,8 @@ from django.conf import settings
 from safecity.apps.locate.models import *
 
 # Regexes
-PUNCTUATION_STRIPPER = re.compile('[\!\"\#\$\%\\\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\]\^\_\`\{\|\}\~]+')
-WHITESPACE_SPLITTER = re.compile('\s+')
+PUNCTUATION_REGEX = re.compile('[\!\"\#\$\%\\\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\]\^\_\`\{\|\}\~]+')
+WHITESPACE_REGEX = re.compile('\s+')
 
 # Tokens
 TOKEN_NONE = ''
@@ -50,6 +50,9 @@ def find_sub_sequences(needle, haystack):
         if haystack[i:i+needle_len] == needle:
             results.append(i)
             return results
+            
+def strip_punctuation(text):
+    return PUNCTUATION_REGEX.sub(' ', text)
  
 class LocationParser(object):
     """
@@ -112,13 +115,13 @@ class LocationParser(object):
         be tokenized.
         """
         text = text.upper()
-        text = PUNCTUATION_STRIPPER.sub(' ', text)
+        text = strip_punctuation(text)
         text = text.strip()
         
         # Manual hack to handle the only two-word magic string
         text = text.replace('BLOCK OF', 'BLOCKOF')
         
-        words = WHITESPACE_SPLITTER.split(text)
+        words = WHITESPACE_REGEX.split(text)
         return words
         
     def _tokenize_words(self, words):

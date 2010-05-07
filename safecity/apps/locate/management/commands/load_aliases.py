@@ -7,6 +7,7 @@ import os
 from django.conf import settings
 from django.core.management.base import NoArgsCommand, CommandError
 
+from safecity.apps.locate.location_parser import strip_punctuation, WHITESPACE_REGEX
 from safecity.apps.locate.models import *
 
 ROADS_CSV = 'data/streets/names.csv'
@@ -33,7 +34,7 @@ class Command(NoArgsCommand):
             log.info('Clearing all aliases.')
             RoadAlias.objects.all().delete()
         
-        log.info('Creating root aliases.')
+        log.info('Creating canonical aliases.')
         
         for road in Road.objects.all():
             try:
@@ -42,7 +43,7 @@ class Command(NoArgsCommand):
                     alias_type='CA'
                 )
             except RoadAlias.DoesNotExist:
-                # Create "root" alias--exactly the original name
+                # Create canonical alias--exactly the original name
                 alias = RoadAlias.objects.create(
                     name=road.name,
                     alias_type='CA'
@@ -64,7 +65,7 @@ class Command(NoArgsCommand):
         for row in reader:
             canonical_name = id_name_mapping[row['Base_Street_ID']]
             alias_type = ALIAS_TYPES[row['Alias Type']]
-            alias_name = row['Street Name']
+            alias_name = self.format_alias_name(row['Street Name'])
             
             try:
                 canonical_alias = RoadAlias.objects.get(
@@ -92,3 +93,11 @@ class Command(NoArgsCommand):
                 new_alias.roads.add(road)
                 
             log.debug('Created alias %s for %s' % (alias_name, canonical_name))
+            
+    def format_alias_name(self, name):
+        """
+        Handles stripping punctuation and formatting whitespace.
+        """
+        result = strip_punctuation(name)
+        result = WHITESPACE_REGEX.sub(' ', result)
+        return result
