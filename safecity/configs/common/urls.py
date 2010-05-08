@@ -6,6 +6,7 @@ admin.autodiscover()
 admin.site.disable_action('delete_selected')
 
 urlpatterns = patterns('',
+    (r'^admin/mock/', include('safecity.apps.mock.urls')),
     (r'^admin/(.*)', admin.site.root),
     
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {

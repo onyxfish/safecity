@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'safecity.apps.danger',
     'safecity.apps.tropo',
     'safecity.apps.public',
+    'safecity.apps.mock',
 )
 
 # Predefined domain
