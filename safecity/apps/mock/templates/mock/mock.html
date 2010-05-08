@@ -1,1 +1,60 @@
-TODO
+{% extends "base.html" %}
+
+{% block title %}Safecity SMS Mocker{% endblock %}
+
+{% block extrahead %}
+<script type="text/javascript">
+function outbound_sms(data, status) {
+    for (d in data) {
+        row = "<tr>";
+        row += "<td>" + data[d][0] + "</td>";
+        row += "<td>Out</td>";
+        row += "<td>" + data[d][1] + "</td>";
+        row += "</tr>";
+        
+        $("#traffic").append(row);
+    }
+};
+
+function inbound_sms() {
+    row = "<tr>";
+    row += "<td>" + $("#mockup-sender").val() + "</td>";
+    row += "<td>In</td>";
+    row += "<td>" + $("#mockup-text").val() + "</td>";
+    row += "</tr>";
+    
+    $("#traffic").append(row);
+    
+    $.ajax({
+         url: '{% url mock_sms_ajax %}',
+         dataType: 'json',
+         data: $("#mockup").serialize(),
+         success: outbound_sms
+         });
+    
+    return false;
+}
+
+$(document).ready(function () {
+   $("#mockup-submit").click(inbound_sms);
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<table id="traffic" width="100%">
+    <tr>
+        <th>Phone #</th>
+        <th>Direction</th>
+        <th>Message</th>
+    </tr>
+</table><br />
+<p>
+Submit a mock SMS message:
+</p><br />
+<form id="mockup">
+    <label for="sender">Sender:</label><input type="text" name="sender" id="mockup-sender" /><br/ >
+    <label for="text">Message:</label><input type="text" name="text" id="mockup-text" /><br />
+    <input type="submit" id="mockup-submit" value="Send" />
+</form>
+{% endblock %}

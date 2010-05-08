@@ -22,11 +22,11 @@ class MockIncomingMessage(IncomingMessage):
         self.mock_output = []
 
     def respond(self, text):
-        self.mock_output.append('%s <<< %s' % (self.sender, text))
+        self.mock_output.append((self.sender, text))
 
     def forward(self, recipients):
         for r in recipients:
-            self.mock_output.append('%s <<< %s' % (r, self.text))
+            self.mock_output.append((r, self.text))
 
 @staff_member_required
 def mock(request):
@@ -49,6 +49,8 @@ def mock_sms_ajax(request):
         received=datetime.now())
         
     response = process_message(message)
-    response.content = '<br />'.join(message.mock_output)
+    
+    response.content = json.dumps(message.mock_output)
+    response.mimetype = 'application/javascript'
     
     return response
