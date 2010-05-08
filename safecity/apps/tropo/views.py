@@ -22,7 +22,14 @@ def incoming(request):
         sender=request.REQUEST.get('sender'),
         text=str(request.REQUEST.get('text')),
         received=datetime.now())
+        
+    return process_message(message)
     
+def process_message(message):
+    """
+    The root message processing handler--parses the message and hands it off
+    to other processors as appropriate.
+    """
     # TODO - strip whitespace
     # TODO - handle blank messages
 
