@@ -7,7 +7,7 @@ import os
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.gdal.error import OGRException
-from django.contrib.gis.geos import fromstr, Point
+from django.contrib.gis.geos import fromstr, LineString, MultiLineString, Point
 from django.core.management.base import NoArgsCommand, CommandError
 from django.db import connection, transaction
 
@@ -37,6 +37,8 @@ class Command(NoArgsCommand):
         make_option('-t', '--test', action='store_true', dest='test',
             help='Load test centerline data.'),
         )
+        
+    paths = {}
 
     def handle_noargs(self, **options):
         if options['clear']:
@@ -97,6 +99,11 @@ class Command(NoArgsCommand):
                 if t_road:
                     location = Point(linestring.coords[-1], srid=9102671)
                     self.create_intersection(road, t_road, location)
+        
+        for k, v in self.paths.items():
+            # Remaing lines that can't be merged have a fork, divided road, or other anomaly
+            if len(v) > 1 and type(v.merged) == MultiLineString:
+                print 'Unable to merge block segments: %s %s' % k
                     
         log.info('Finished.')
         
@@ -164,20 +171,40 @@ class Command(NoArgsCommand):
                 (road.full_name, from_addr_left, to_addr_left, from_addr_right, to_addr_right))
             return
             
-        # Get center-point of block
-        location = fromstr(self.estimate_point_along_linestring(linestring, 0.50), srid=9102671)
-        
         try:
-            Block.objects.get(
+            block = Block.objects.get(
                 number=block_number,
                 road=road
                 )
+                
+            # Add new segment to set composing this block
+            self.paths[(block_number, road)].append(linestring.geos)
+            
+            # Attempt to merge line set
+            path = self.paths[(block_number, road)].merged
+            
+            # If the merge succeeded this will be LineString (otherwise MultiLineString)
+            if type(path) == LineString:
+                location = fromstr(self.estimate_point_along_linestring(path, 0.50), srid=9102671)
+                block.location = location
+                block.save()
+                #print 'Merge success: %s %s' % (block_number, road)
+            else:
+                # Discontinous segments could not be merged, assume there are more to come.
+                #print 'Merge fail: %s %s' % (block_number, road)
+                return
         except Block.DoesNotExist:
+            # Get center-point of segment
+            location = fromstr(self.estimate_point_along_linestring(linestring, 0.50), srid=9102671)
+                
             Block.objects.create(
                 number=block_number,
                 road=road,
                 location=location
                 )
+                
+            # Store linestring in case this block turns out to have multiple segments
+            self.paths[(block_number, road)] = MultiLineString(linestring.geos)
                 
     def get_block_number(self, from_addr_left, to_addr_left, from_addr_right, to_addr_right):
         """

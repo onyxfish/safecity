@@ -190,7 +190,8 @@ class Block(models.Model):
         'Road',
         help_text='The road this block is a part of.')
     
-    location = models.PointField()
+    location = models.PointField(
+        help_text='The center point of this block.')
     
     objects = models.GeoManager()
     
