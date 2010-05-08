@@ -107,7 +107,7 @@ class Command(NoArgsCommand):
         for k, v in self.paths.items():
             # Remaing lines that can't be merged have a fork, divided road, or other anomaly
             if len(v) > 1 and type(v.merged) == MultiLineString:
-                print 'Unable to merge block segments: %s %s' % k
+                log.warn('Unable to merge block segments: %s %s' % k)
                     
         log.info('Finished.')
         
@@ -192,10 +192,8 @@ class Command(NoArgsCommand):
                 location = fromstr(self.estimate_point_along_linestring(path, 0.50), srid=9102671)
                 block.location = location
                 block.save()
-                #print 'Merge success: %s %s' % (block_number, road)
             else:
                 # Discontinous segments could not be merged, assume there are more to come.
-                #print 'Merge fail: %s %s' % (block_number, road)
                 return
         except Block.DoesNotExist:
             # Get center-point of segment
