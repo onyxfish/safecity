@@ -36,6 +36,8 @@ class Command(NoArgsCommand):
             help='Clear all centerline data from the DB.'),
         make_option('-t', '--test', action='store_true', dest='test',
             help='Load test centerline data.'),
+        make_option('-d', '--demo', action='store_true', dest='demo',
+            help='Load demo centerline data.'),
         )
         
     paths = {}
@@ -51,6 +53,8 @@ class Command(NoArgsCommand):
         
         if options['test']:
             shapefile = os.path.join(DATA_DIR, 'test/test.shp')
+        elif options['demo']:
+            shapefile = os.path.join(DATA_DIR, 'loop/loop.shp')
         else:
             shapefile = os.path.join(DATA_DIR, 'full/Transportation.shp')
             
