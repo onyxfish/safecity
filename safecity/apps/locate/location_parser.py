@@ -74,8 +74,8 @@ class LocationParser(object):
         """
         Build word and token sets.
         """
-        with open(os.path.join(settings.DATA_DIR, 'wordlists/en-basic')) as f:
-            self.SKIP_WORDS = [word.upper() for word in f.readlines()]
+        with open(os.path.join(settings.DATA_DIR, 'wordlists/skipwords')) as f:
+            self.SKIP_WORDS = [word for word in f.readlines()]
         
         with open(os.path.join(settings.DATA_DIR, 'streets/road_types.csv')) as f:
             for line in f.readlines():
