@@ -2,7 +2,36 @@
 
 {% block title %}Safecity SMS Mocker{% endblock %}
 
-{% block extrahead %}
+{% block content %}
+
+<div class="container container_12">
+<div id="header" class="grid_12">
+    <br />
+    <h1>SMS Mocker</h1>
+    <br />
+</div>
+<div id="main" class="grid_12">
+    <table id="traffic" width="100%">
+        <tr>
+            <th width="15%" align="left">Sender/Recipient</th>
+            <th width="10%" align="left">Direction</th>
+            <th width="75%" align="left">Message</th>
+        </tr>
+    </table>
+    <br />
+    <hr />
+    <br />
+</div>
+    <form id="mockup">
+        <div class="grid_2"><label for="sender">Sender:</label><br /><input type="text" name="sender" id="mockup-sender" /></div>
+        <div class="grid_9"><label for="text">Message:</label><br /><input type="text" name="text" id="mockup-text" size="100"></div>
+        <div class="grid_1"><br /><input type="submit" id="mockup-submit" value="Send" /></div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block extrafoot %}
 <script type="text/javascript">
 function outbound_sms(data, status) {
     for (d in data) {
@@ -39,22 +68,4 @@ $(document).ready(function () {
    $("#mockup-submit").click(inbound_sms);
 });
 </script>
-{% endblock %}
-
-{% block content %}
-<table id="traffic" width="100%">
-    <tr>
-        <th>Phone #</th>
-        <th>Direction</th>
-        <th>Message</th>
-    </tr>
-</table><br />
-<p>
-Submit a mock SMS message:
-</p><br />
-<form id="mockup">
-    <label for="sender">Sender:</label><input type="text" name="sender" id="mockup-sender" /><br/ >
-    <label for="text">Message:</label><input type="text" name="text" id="mockup-text" /><br />
-    <input type="submit" id="mockup-submit" value="Send" />
-</form>
 {% endblock %}
