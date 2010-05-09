@@ -123,4 +123,13 @@ def process_report(message):
             recipients=[r.phone_number for r in recipients]
             )
 
+    response_text = 'Thank you for your report. It has been sent to residents in the area.'
+
+    try:
+        Resident.objects.get(phone_number=message.sender)
+    except Resident.DoesNotExist:
+        response_text += ' To receive reports, reply with the word "join" and your location.'
+   
+    message.respond(response_text)
+
     return TropoOkResponse()
