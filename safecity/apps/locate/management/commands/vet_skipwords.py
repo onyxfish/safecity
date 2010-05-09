@@ -16,6 +16,11 @@ class Command(NoArgsCommand):
     title = 'locate.vet_skip_words'
     help = 'Verify that no skip_words are road names or other keywords.'
 
+    option_list = NoArgsCommand.option_list + (
+        make_option('-r', '--rewrite', action='store_true', dest='rewrite',
+            help='Rewrite skipwords list without problem words.'),
+        )
+
     def handle_noargs(self, **options):
         skip_words = []
         
@@ -44,7 +49,6 @@ class Command(NoArgsCommand):
         rewrite = skip_words
         
         for word in skip_words:
-            # Check against road types
             if word in road_types:
                 log.error('Word "%s" is also a road type.' % word)
                 rewrite.remove(word)
@@ -70,8 +74,9 @@ class Command(NoArgsCommand):
                         log.error('Word "%s" is also a part of road alias "%s".' % (word, alias.name))
                         rewrite.remove(word)
                         break
-                        
-        log.info('Rewriting skip_words list without problem words')
         
-        with open(os.path.join(settings.DATA_DIR, 'wordlists/skipwords')) as f:
-            f.write('\n'.join(rewrite))
+        if options['rewrite']:             
+            log.info('Rewriting skip_words list without problem words')
+        
+            with open(os.path.join(settings.DATA_DIR, 'wordlists/skipwords'), 'w') as f:
+                f.write('\n'.join(rewrite))
