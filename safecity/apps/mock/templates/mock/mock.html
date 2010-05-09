@@ -47,9 +47,9 @@ function outbound_sms(data, status) {
 
 function inbound_sms() {
     row = "<tr>";
-    row += "<td>" + $("#mockup-sender").val() + "</td>";
-    row += "<td>In</td>";
-    row += "<td>" + $("#mockup-text").val() + "</td>";
+    row += "<td><em>" + $("#mockup-sender").val() + "</em></td>";
+    row += "<td><em>In</em></td>";
+    row += "<td><em>" + $("#mockup-text").val() + "</em></td>";
     row += "</tr>";
     
     $("#traffic").append(row);
