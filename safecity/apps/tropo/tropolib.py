@@ -22,6 +22,9 @@ class TropoIncomingMessage(IncomingMessage):
     def __init__(self, sender, text, received):
         super(TropoIncomingMessage, self).__init__(
             sender, text, received, outgoing_cls=TropoOutgoingMessage)
+
+        if settings.DEBUG: 
+            log.debug('Created TropoIncomingMessage: %s, %s' % (sender, text)) 
             
 class TropoOutgoingMessage(OutgoingMessage):
     """
@@ -39,6 +42,9 @@ class TropoOutgoingMessage(OutgoingMessage):
         
         url = '?'.join([TROPO_URL, urlencode(params)])
         
+        if settings.DEBUG:
+            log.debug('Sending TropoOutgoingMessage: %s' % url)
+            
         urlopen(url)
             
 # Custom HttpResponse objects
