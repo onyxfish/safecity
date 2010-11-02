@@ -45,7 +45,10 @@ class TropoOutgoingMessage(OutgoingMessage):
         if settings.DEBUG:
             log.debug('Sending TropoOutgoingMessage: %s' % url)
             
-        urlopen(url)
+        response = urlopen(url)
+
+        if settings.DEBUG:
+            log.debug('Tropo response: %s' % response.read())
             
 # Custom HttpResponse objects
 
